@@ -1,27 +1,22 @@
 /* Egg Nebula
-   Palette sampled from the existing art; texture borrowed from crayon/pastel references. */
+   Mostly dark blue and white. Pink is the primary accent, purple the secondary; both used sparingly. */
 
 :root {
-  --night: #1a0a30;
-  --indigo: #17094a;
-  --plum: #2c1460;
-  --magenta: #a44d88;
-  --pink: #e39ccb;
-  --violet: #6f2dbd;
-  --lavender: #e5deee;
-  --teal: #4a9e8c;
-  --grass: #2a6e60;
-  --blue: #2f80c4;
-  --star: #f5c95c;
+  /* Brand palette */
+  --night: #19082c;
+  --pink: #a34e8b;
+  --purple: #702dbe;
+  --white: #e5deee;
+  --teal: #469b87;
 
-  --text: #f1ebf7;
-  --muted: #cbc0dc;
-  --line: rgba(229, 222, 238, 0.22);
-  --card: rgba(229, 222, 238, 0.06);
+  /* Tints and shades of the palette hues */
+  --pink-light: #dc9cc6;
+  --pink-deep: #8c3d76;
+  --muted: #c4b9d3;
+  --ink-muted: #4b3b60;
+  --line: #3b2a52;
 
-  --font-display: "Baloo 2", "Trebuchet MS", system-ui, sans-serif;
-  --font-body: "Nunito", system-ui, -apple-system, "Segoe UI", sans-serif;
-  --font-hand: "Caveat", "Segoe Print", cursive;
+  --font: "Lexend", system-ui, -apple-system, "Segoe UI", sans-serif;
 
   --wrap: 1120px;
   --gutter: clamp(16px, 4vw, 40px);
@@ -41,11 +36,12 @@ html {
 
 body {
   margin: 0;
-  background: linear-gradient(180deg, var(--night) 0%, var(--indigo) 100%) var(--night);
-  color: var(--text);
-  font-family: var(--font-body);
-  font-size: 1.0625rem;
-  line-height: 1.65;
+  background: var(--night);
+  color: var(--white);
+  font-family: var(--font);
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.7;
   -webkit-font-smoothing: antialiased;
   overflow-x: hidden;
 }
@@ -57,7 +53,7 @@ body::after {
   inset: 0;
   z-index: 50;
   pointer-events: none;
-  opacity: 0.32;
+  opacity: 0.25;
   mix-blend-mode: soft-light;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 1.4 -0.35'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
@@ -71,25 +67,24 @@ img {
 h1,
 h2,
 h3 {
-  font-family: var(--font-display);
-  line-height: 1.1;
+  line-height: 1.15;
   margin: 0 0 0.5em;
   text-wrap: balance;
+  letter-spacing: -0.015em;
 }
 
 h1 {
-  font-size: clamp(2.4rem, 6vw, 4.25rem);
+  font-size: clamp(2.1rem, 5.2vw, 3.6rem);
   font-weight: 700;
-  letter-spacing: -0.01em;
 }
 
 h2 {
-  font-size: clamp(1.9rem, 4vw, 2.75rem);
+  font-size: clamp(1.7rem, 3.6vw, 2.4rem);
   font-weight: 700;
 }
 
 h3 {
-  font-size: 1.4rem;
+  font-size: 1.25rem;
   font-weight: 600;
 }
 
@@ -98,18 +93,18 @@ p {
 }
 
 a {
-  color: var(--text);
-  text-decoration-color: var(--star);
+  color: inherit;
+  text-decoration-color: var(--pink);
   text-decoration-thickness: 2px;
-  text-underline-offset: 3px;
+  text-underline-offset: 4px;
 }
 
 a:hover {
-  color: var(--star);
+  text-decoration-color: currentColor;
 }
 
 :focus-visible {
-  outline: 3px solid var(--star);
+  outline: 3px solid var(--pink-light);
   outline-offset: 3px;
   border-radius: 6px;
 }
@@ -133,11 +128,11 @@ a:hover {
   left: 12px;
   top: -60px;
   z-index: 100;
-  background: var(--star);
+  background: var(--white);
   color: var(--night);
   padding: 8px 14px;
   border-radius: 10px;
-  font-weight: 700;
+  font-weight: 600;
 }
 
 .skip-link:focus {
@@ -153,66 +148,52 @@ a:hover {
 /* ---------- Small pieces ---------- */
 
 .eyebrow {
-  font-family: var(--font-hand);
-  font-size: 1.55rem;
-  line-height: 1.1;
-  color: var(--star);
-  margin: 0 0 0.35em;
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  line-height: 1.2;
+  color: var(--pink-light);
+  margin: 0 0 0.9em;
 }
 
 .lead {
-  font-size: clamp(1.1rem, 2vw, 1.3rem);
+  font-size: clamp(1.05rem, 1.8vw, 1.2rem);
+  font-weight: 300;
   color: var(--muted);
   max-width: 34em;
 }
 
 .btn {
-  position: relative;
-  isolation: isolate;
   display: inline-flex;
   align-items: center;
   gap: 0.5em;
-  padding: 0.7em 1.5em;
-  border: 0;
-  background: none;
+  padding: 0.75em 1.5em;
+  border: 2px solid var(--pink);
+  border-radius: 999px;
+  background: var(--pink);
   color: #fff;
-  font: 700 1.05rem/1.2 var(--font-display);
-  letter-spacing: 0.01em;
+  font: 600 1rem/1.2 var(--font);
   text-decoration: none;
   cursor: pointer;
   transition: transform 0.15s ease;
 }
 
-.btn::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  border-radius: 999px;
-  background: var(--magenta);
-  filter: url(#rough);
-}
-
 .btn:hover {
-  color: #fff;
-  transform: translateY(-2px) rotate(-1deg);
+  transform: translateY(-2px);
 }
 
-.btn--ghost::before {
-  background: transparent;
-  border: 2px solid var(--lavender);
-}
-
-.btn--ghost,
-.btn--ghost:hover {
-  color: var(--lavender);
+.btn--ghost {
+  background: none;
+  border-color: var(--white);
+  color: var(--white);
 }
 
 .sparkle {
   position: absolute;
   width: var(--s, 28px);
   height: var(--s, 28px);
-  fill: var(--star);
+  fill: var(--white);
   pointer-events: none;
   animation: twinkle 4.5s ease-in-out infinite;
   animation-delay: var(--d, 0s);
@@ -224,12 +205,11 @@ a:hover {
 
 .streak {
   position: absolute;
-  height: var(--h, 34px);
-  width: var(--w, 220px);
+  height: var(--h, 28px);
+  width: var(--w, 180px);
   border-radius: 999px;
-  background: var(--c, var(--magenta));
+  background: var(--c, var(--pink));
   transform: rotate(-9deg);
-  filter: url(#rough);
   pointer-events: none;
 }
 
@@ -243,7 +223,7 @@ a:hover {
 .stars i {
   position: absolute;
   border-radius: 50%;
-  background: #fff;
+  background: var(--white);
 }
 
 .stars i.twinkle {
@@ -278,8 +258,7 @@ a:hover {
   position: sticky;
   top: 0;
   z-index: 40;
-  background: rgba(26, 10, 48, 0.82);
-  backdrop-filter: blur(8px);
+  background: var(--night);
 }
 
 .site-header .wrap {
@@ -294,9 +273,10 @@ a:hover {
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  font: 700 1.35rem/1 var(--font-display);
+  font-size: 1.2rem;
+  font-weight: 700;
+  line-height: 1;
   text-decoration: none;
-  color: var(--text);
 }
 
 .brand img {
@@ -306,10 +286,10 @@ a:hover {
 .nav-toggle {
   display: none;
   background: none;
-  border: 2px solid var(--line);
+  border: 2px solid var(--white);
   border-radius: 999px;
-  color: var(--text);
-  font: 700 1rem var(--font-display);
+  color: var(--white);
+  font: 600 0.95rem var(--font);
   padding: 6px 16px;
   cursor: pointer;
 }
@@ -323,7 +303,7 @@ a:hover {
 }
 
 .site-nav a {
-  font: 600 1.08rem var(--font-display);
+  font-weight: 500;
   text-decoration: none;
   padding: 6px 2px;
   border-bottom: 3px solid transparent;
@@ -331,8 +311,7 @@ a:hover {
 
 .site-nav a:hover,
 .site-nav a[aria-current="page"] {
-  color: var(--text);
-  border-bottom-color: var(--star);
+  border-bottom-color: var(--pink);
 }
 
 @media (max-width: 640px) {
@@ -427,7 +406,7 @@ a:hover {
   width: 100%;
   height: var(--hill-h);
   z-index: 1;
-  fill: var(--plum);
+  fill: var(--teal);
 }
 
 @media (max-width: 760px) {
@@ -480,53 +459,60 @@ a:hover {
   margin-inline: auto;
 }
 
-/* About sits on the hill the mascots stand on. */
+/* About is the one light section: white paper under the hill. */
 .about {
-  background: var(--plum);
-  border-radius: 0 0 50% 50% / 0 0 clamp(30px, 6vw, 80px) clamp(30px, 6vw, 80px);
+  background: var(--white);
+  color: var(--night);
   text-align: center;
+}
+
+.about .eyebrow {
+  color: var(--pink-deep);
+}
+
+.about :focus-visible {
+  outline-color: var(--purple);
 }
 
 .about-copy {
   max-width: 38em;
   margin-inline: auto;
-  font-size: 1.15rem;
+  font-size: 1.1rem;
+  font-weight: 300;
 }
 
 .about blockquote {
-  position: relative;
-  max-width: 30em;
-  margin: 1.6em auto 0;
-  font: 600 clamp(1.5rem, 3vw, 1.9rem) / 1.3 var(--font-hand);
-  color: var(--lavender);
+  max-width: 32em;
+  margin: 1.8em auto 0;
+  font-size: clamp(1.15rem, 2.2vw, 1.4rem);
+  font-weight: 600;
+  line-height: 1.45;
 }
 
 .values {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 18px;
-  margin-top: clamp(32px, 5vw, 56px);
+  gap: clamp(20px, 4vw, 40px);
+  margin: clamp(36px, 6vw, 64px) 0 0;
   padding: 0;
   list-style: none;
   text-align: left;
 }
 
 .values li {
-  padding: 20px 22px;
-  border-radius: 20px;
-  background: rgba(26, 10, 48, 0.45);
+  padding-top: 16px;
+  border-top: 3px solid var(--night);
 }
 
 .values h3 {
-  font-size: 1.2rem;
-  color: var(--star);
-  margin-bottom: 0.25em;
+  font-size: 1.1rem;
+  margin-bottom: 0.3em;
 }
 
 .values p {
   margin: 0;
-  color: var(--muted);
-  font-size: 1rem;
+  color: var(--ink-muted);
+  font-size: 0.95rem;
 }
 
 @media (max-width: 760px) {
@@ -565,41 +551,29 @@ a:hover {
 }
 
 .card {
-  position: relative;
-  isolation: isolate;
   display: flex;
   flex-direction: column;
-  color: var(--text);
+  border-radius: 24px;
+  background: var(--white);
+  color: var(--night);
   text-decoration: none;
   transition: transform 0.2s ease;
 }
 
-.card::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  border-radius: 26px;
-  background: var(--card);
-  border: 2px solid var(--line);
-  filter: url(#rough);
-}
-
 a.card:hover {
-  color: var(--text);
-  transform: translateY(-4px) rotate(-0.5deg);
+  transform: translateY(-4px);
 }
 
-a.card:hover::before {
-  border-color: var(--star);
+a.card:hover .card-link {
+  text-decoration-color: var(--night);
 }
 
 .card-art {
-  margin: 14px 14px 0;
-  border-radius: 18px;
+  margin: 12px 12px 0;
+  border-radius: 14px;
   overflow: hidden;
   aspect-ratio: 16 / 10;
-  background: var(--indigo);
+  background: var(--night);
 }
 
 .card-art img,
@@ -611,31 +585,33 @@ a.card:hover::before {
 }
 
 .card-body {
-  padding: 18px 24px 24px;
+  padding: 18px 22px 24px;
 }
 
 .card-body p {
-  color: var(--muted);
-  margin-bottom: 0.6em;
+  color: var(--ink-muted);
+  font-size: 0.95rem;
+  margin-bottom: 0.8em;
 }
 
 .card-link {
-  font: 700 1.05rem var(--font-display);
-  color: var(--star);
-}
-
-.card--soon .card-art {
-  opacity: 0.7;
+  font-weight: 600;
+  text-decoration: underline;
+  text-decoration-color: var(--pink);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 4px;
 }
 
 .tag {
   display: inline-block;
-  font: 700 1.3rem/1 var(--font-hand);
-  color: var(--night);
-  background: var(--star);
-  padding: 4px 14px 6px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  line-height: 1;
+  color: var(--white);
+  background: var(--purple);
+  padding: 7px 14px;
   border-radius: 999px;
-  rotate: -3deg;
 }
 
 .section-foot {
@@ -661,7 +637,7 @@ a.card:hover::before {
 
 .field label {
   display: block;
-  font: 600 1.05rem var(--font-display);
+  font-weight: 500;
   margin-bottom: 4px;
 }
 
@@ -669,20 +645,15 @@ a.card:hover::before {
   width: 100%;
   padding: 12px 18px;
   border-radius: 999px;
-  border: 2px solid var(--line);
-  background: rgba(229, 222, 238, 0.08);
-  color: var(--text);
+  border: 2px solid var(--white);
+  background: var(--white);
+  color: var(--night);
   font: inherit;
 }
 
-.field input::placeholder {
-  color: #a99cc0;
-}
-
 .field input:focus-visible {
-  outline-offset: 1px;
+  outline-offset: 2px;
   border-radius: 999px;
-  border-color: var(--star);
 }
 
 .newsletter-form .btn {
@@ -691,11 +662,10 @@ a.card:hover::before {
 }
 
 .form-note {
-  min-height: 1.6em;
+  min-height: 1.7em;
   margin: 0;
   text-align: center;
-  color: var(--star);
-  font-weight: 600;
+  font-weight: 500;
 }
 
 .ground {
@@ -735,8 +705,7 @@ a.card:hover::before {
   height: 46px;
   margin-top: -30px;
   background:
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='46'%3E%3Cpath d='M0 46V26l8-14 6 16 8-22 8 24 8-14 8 14 10-22 6 20 8-14 10 12v20z' fill='%232a6e60'/%3E%3C/svg%3E") 0 100% / 80px 46px repeat-x,
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='110' height='46'%3E%3Cpath d='M0 46V20l10-16 9 20 12-18 11 22 13-24 10 22 12-16 11 18 12-14 10 10v16z' fill='%234a9e8c'/%3E%3C/svg%3E") 30px 60% / 110px 46px repeat-x;
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='46'%3E%3Cpath d='M0 46V26l8-14 6 16 8-22 8 24 8-14 8 14 10-22 6 20 8-14 10 12v20z' fill='%23469b87'/%3E%3C/svg%3E") 0 100% / 80px 46px repeat-x;
 }
 
 @media (max-width: 640px) {
@@ -748,7 +717,8 @@ a.card:hover::before {
 /* ---------- Footer ---------- */
 
 .site-footer {
-  background: var(--grass);
+  background: var(--teal);
+  color: var(--night);
   padding-block: 36px 44px;
 }
 
@@ -760,7 +730,7 @@ a.card:hover::before {
 }
 
 .site-footer h2 {
-  font-size: 1.5rem;
+  font-size: 1.4rem;
   margin-bottom: 0.3em;
 }
 
@@ -778,12 +748,16 @@ a.card:hover::before {
 }
 
 .site-footer a {
-  font-weight: 700;
+  font-weight: 600;
+  text-decoration-color: var(--night);
+}
+
+.site-footer :focus-visible {
+  outline-color: var(--night);
 }
 
 .footer-small {
-  font-size: 0.95rem;
-  opacity: 0.9;
+  font-size: 0.9rem;
 }
 
 /* ---------- Resources page ---------- */
@@ -811,19 +785,21 @@ a.card:hover::before {
 .jump a {
   display: inline-block;
   padding: 6px 16px;
-  border: 2px solid var(--line);
+  border: 2px solid var(--white);
   border-radius: 999px;
-  font: 600 1rem var(--font-display);
+  font-size: 0.95rem;
+  font-weight: 500;
   text-decoration: none;
 }
 
 .jump a:hover {
-  border-color: var(--star);
+  background: var(--white);
+  color: var(--night);
 }
 
 .resource-section {
   padding-block: clamp(36px, 6vw, 72px);
-  border-top: 2px dashed var(--line);
+  border-top: 2px solid var(--line);
 }
 
 .piece {
@@ -839,13 +815,18 @@ a.card:hover::before {
 }
 
 .piece-text h3 {
-  font-size: clamp(1.5rem, 3vw, 1.9rem);
+  font-size: clamp(1.35rem, 2.6vw, 1.7rem);
 }
 
 .piece-text h4 {
-  font: 600 1.25rem var(--font-display);
-  margin: 1.2em 0 0.3em;
-  color: var(--star);
+  font-size: 1.15rem;
+  font-weight: 600;
+  margin: 1.4em 0 0.4em;
+}
+
+.piece-text p,
+.piece-text dd {
+  font-weight: 300;
 }
 
 .piece-text dl {
@@ -853,14 +834,12 @@ a.card:hover::before {
 }
 
 .piece-text dt {
-  font: 600 1.12rem var(--font-display);
-  color: var(--pink);
-  margin-top: 0.9em;
+  font-weight: 600;
+  margin-top: 1em;
 }
 
 .piece-text dd {
   margin: 0;
-  color: var(--text);
 }
 
 @media (max-width: 760px) {
@@ -878,20 +857,20 @@ a.card:hover::before {
   width: 100%;
   padding: 0;
   border: 2px solid var(--line);
-  border-radius: 18px;
+  border-radius: 16px;
   overflow: hidden;
-  background: var(--indigo);
+  background: var(--night);
   cursor: zoom-in;
   transition: transform 0.2s ease, border-color 0.2s ease;
 }
 
 .zoom:hover {
-  transform: rotate(-0.6deg) scale(1.01);
-  border-color: var(--star);
+  transform: scale(1.01);
+  border-color: var(--white);
 }
 
 .zoom:focus-visible {
-  border-radius: 18px;
+  border-radius: 16px;
 }
 
 .gallery {
@@ -916,14 +895,14 @@ a.card:hover::before {
   border: 0;
   padding: 0;
   background: transparent;
-  color: var(--text);
+  color: var(--white);
   max-width: min(96vw, 1000px);
   max-height: 96vh;
   overflow: visible;
 }
 
 .lightbox::backdrop {
-  background: rgba(12, 4, 26, 0.9);
+  background: rgba(25, 8, 44, 0.92);
 }
 
 .lightbox img {
@@ -947,20 +926,21 @@ a.card:hover::before {
   min-height: 44px;
   padding: 6px 16px;
   border-radius: 999px;
-  border: 2px solid var(--line);
+  border: 2px solid var(--white);
   background: var(--night);
-  color: var(--text);
-  font: 700 1rem var(--font-display);
+  color: var(--white);
+  font: 600 0.95rem var(--font);
   cursor: pointer;
 }
 
 .lightbox-bar button:hover {
-  border-color: var(--star);
+  background: var(--white);
+  color: var(--night);
 }
 
 .lightbox-count {
-  font: 600 1.3rem var(--font-hand);
-  min-width: 4em;
+  font-weight: 500;
+  min-width: 5em;
   text-align: center;
 }
 
