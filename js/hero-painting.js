@@ -11,6 +11,10 @@
   if (!hero || !canvas || !hillEl) return;
   const ctx = canvas.getContext("2d");
 
+  // With a shader variation chosen (see hero-shader.js), the sky is left clear so the shader
+  // shows through, and only the hill and the paper grain are painted here.
+  const paintSky = (document.documentElement.dataset.hero || "painted") === "painted";
+
   const NIGHT = "#19082c";
   const SKY = ["#1b0930", "#1e0b35", "#220d3b", "#261042"];
   const SWIRL = ["#200d44", "#281153", "#301564", "#3b1a78"];
@@ -161,11 +165,11 @@
     // ----- Sky layer -----
     const [skyEl, sky] = layer();
     sky.fillStyle = NIGHT;
-    sky.fillRect(0, 0, W, H);
+    if (paintSky) sky.fillRect(0, 0, W, H);
 
     const accents = [];
     const step = 12;
-    for (let gy = 0; gy < H; gy += step) {
+    for (let gy = 0; paintSky && gy < H; gy += step) {
       for (let gx = 0; gx < W; gx += step) {
         const x = gx + between(-6, 6);
         const y = gy + between(-6, 6);
@@ -211,7 +215,7 @@
 
     // Stars and sparkles go on top of the sky layer.
     const stars = [];
-    for (let i = 0; i < (W * H) / 7000; i++) {
+    for (let i = 0; paintSky && i < (W * H) / 7000; i++) {
       const x = rand() * W;
       const y = rand() * H;
       if (y > hillY(x) - 12) continue;
@@ -219,7 +223,7 @@
     }
 
     const sparkles = [];
-    for (let tries = 0; tries < 200 && sparkles.length < (narrow ? 6 : 10); tries++) {
+    for (let tries = 0; paintSky && tries < 200 && sparkles.length < (narrow ? 6 : 10); tries++) {
       const x = between(20, W - 20);
       const y = between(20, H - 20);
       if (y > hillY(x) - 60 || clearOfText(x, y) < 1) continue;
@@ -280,7 +284,7 @@
       ground.fill();
     }
 
-    scene = { W, H, dpr, skyEl, hillLayerEl, accents, stars, sparkles, blades, cx, cy, ribbonEnd, ribbonY, clearOfText };
+    scene = { hill, W, H, dpr, skyEl, hillLayerEl, accents, stars, sparkles, blades, cx, cy, ribbonEnd, ribbonY, clearOfText };
   }
 
   function draw() {
@@ -288,6 +292,7 @@
     ctx.setTransform(s.dpr, 0, 0, s.dpr, 0, 0);
     ctx.lineCap = "round";
     ctx.globalAlpha = 1;
+    ctx.clearRect(0, 0, s.W, s.H);
     ctx.drawImage(s.skyEl, 0, 0, s.W, s.H);
 
     for (const a of s.accents) {
@@ -337,9 +342,18 @@
 
     for (const b of s.blades) blade(ctx, b.x, b.y, b.length, b.lean, b.width, b.color, b.alpha);
 
+    // Over a shader sky the grain would read as static, so it is kept to the grass there.
     ctx.globalAlpha = 1;
     ctx.fillStyle = grain;
-    ctx.fillRect(0, 0, s.W, s.H);
+    if (paintSky) {
+      ctx.fillRect(0, 0, s.W, s.H);
+    } else {
+      ctx.beginPath();
+      ctx.moveTo(0, s.H);
+      for (const [x, y] of s.hill) ctx.lineTo(x, y - 14);
+      ctx.lineTo(s.W, s.H);
+      ctx.fill();
+    }
   }
 
   build();

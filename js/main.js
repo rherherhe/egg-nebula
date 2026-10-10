@@ -2,6 +2,26 @@
 // While this is empty, the form tells visitors honestly that sign-ups aren't open yet.
 const NEWSLETTER_ENDPOINT = "";
 
+// Hero background variations. Each has its own link (?hero=nebula and so on) so they can be
+// compared side by side; hero-shader.js and hero-painting.js read the choice from <html data-hero>.
+const HERO_VARIANTS = { painted: "Painted", nebula: "Nebula", aurora: "Aurora", swirl: "Swirl" };
+const hero = document.querySelector(".hero");
+if (hero) {
+  const asked = new URLSearchParams(location.search).get("hero");
+  const current = Object.hasOwn(HERO_VARIANTS, asked) ? asked : "painted";
+  document.documentElement.dataset.hero = current;
+
+  const switcher = document.createElement("nav");
+  switcher.className = "hero-switcher";
+  switcher.setAttribute("aria-label", "Hero background");
+  switcher.innerHTML =
+    "<span>Background</span>" +
+    Object.entries(HERO_VARIANTS)
+      .map(([key, label]) => `<a href="?hero=${key}"${key === current ? ` aria-current="true"` : ""}>${label}</a>`)
+      .join("");
+  hero.prepend(switcher);
+}
+
 // Mobile nav
 const navToggle = document.querySelector(".nav-toggle");
 const nav = document.querySelector(".site-nav");
