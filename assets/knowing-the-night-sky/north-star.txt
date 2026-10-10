@@ -1,0 +1,7 @@
+Getting to Know the Night Sky Part 3: The North Star
+
+Polaris is currently considered as the North Star because it is closely aligned to the Earth's axis of rotation. However, this has not always been the case nor will it always be.
+
+Because the Earth is not a perfect sphere, the gravitational pull of the Sun and the Moon causes the Earth's axis to wobble like a spinning top. This wobbling of the Earth's axis is called precession.
+
+Due to precession, the star that our axis of rotation points to gradually changes. About 5000 years ago, Thuban (a star in the constellation Draco) was considered the north star. In about 14000 years, Vega, in the constellation Lyra will be the new north star. It takes about 26,000 years for Earth’s axis to complete one circle of precession.
