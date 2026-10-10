@@ -242,16 +242,6 @@ a:hover {
   }
 }
 
-@keyframes bob {
-  0%,
-  100% {
-    translate: 0 0;
-  }
-  50% {
-    translate: 0 -8px;
-  }
-}
-
 /* ---------- Header ---------- */
 
 .site-header {
@@ -386,17 +376,36 @@ a:hover {
   padding-bottom: calc(var(--hill-h) * 0.32);
 }
 
+/* The flat mascots are the fallback; js/mascots-3d.js swaps in the 3D ones. */
 .hero-scene .sunny {
   width: 46%;
   margin-right: -6%;
   position: relative;
   z-index: 1;
-  animation: bob 7s ease-in-out infinite;
 }
 
 .hero-scene .nilly {
   width: 50%;
-  animation: bob 6s ease-in-out infinite -2s;
+}
+
+.hero-scene.has-3d {
+  display: block;
+  aspect-ratio: 10 / 8;
+  padding-bottom: 0;
+}
+
+.hero-scene.has-3d img {
+  display: none;
+}
+
+/* A little larger than its column, so the mascots have room to the left. */
+.mascots-3d {
+  position: absolute;
+  right: -4%;
+  bottom: 0;
+  width: 128%;
+  height: 128%;
+  pointer-events: none;
 }
 
 .hill {
@@ -432,6 +441,12 @@ a:hover {
     max-width: 380px;
     margin-inline: auto;
     width: 100%;
+  }
+
+  .mascots-3d {
+    right: 0;
+    width: 100%;
+    height: 100%;
   }
 }
 

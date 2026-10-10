@@ -2,9 +2,8 @@
 // a night sky built from short brush dashes that follow a swirl, and a hill of grass blades.
 // Everything is drawn in code; there are no image files behind it.
 //
-// The still parts (sky strokes, hill) are painted once onto two offscreen layers. Each frame
-// then adds the few things that move: bright dashes drifting around the swirl, twinkling stars
-// and grass swaying. Visitors who ask for reduced motion get a single still frame instead.
+// The sky strokes and the hill are painted onto two offscreen layers, then combined with
+// the stars, bright dashes and grass fringe into one still picture.
 (() => {
   const hero = document.querySelector(".hero");
   const canvas = document.querySelector(".hero-canvas");
@@ -13,15 +12,12 @@
   const ctx = canvas.getContext("2d");
 
   const NIGHT = "#19082c";
-  const SKY = ["#1d0a33", "#220d3c", "#281146", "#2f1652"];
-  const SWIRL = ["#34186a", "#43208a", "#5626a2", "#702dbe"];
-  const ACCENT = ["#dc9cc6", "#e5deee", "#a34e8b"];
-  const GRASS_BASE = "#35806f";
-  const GRASS = ["#2f7767", "#3b8a77", "#469b87", "#57ad98", "#6dbfab"];
+  const SKY = ["#1b0930", "#1e0b35", "#220d3b", "#261042"];
+  const SWIRL = ["#200d44", "#281153", "#301564", "#3b1a78"];
+  const ACCENT = ["#9a6489", "#9c93aa", "#6a3059"];
+  const GRASS_BASE = "#1d4d42";
+  const GRASS = ["#1a463c", "#215548", "#286556", "#307363", "#3a8472"];
 
-  const DRIFT_SPEED = 5; // px per second, bright dashes around the swirl
-  const SWAY = 2.6; // px, how far the grass tips move
-  const FRAME_MS = 1000 / 30;
 
   // Seeded random, so the painting looks the same on every visit and resize.
   const seeded = (seed) => () => {
@@ -37,7 +33,7 @@
   };
   const clamp01 = (v) => Math.max(0, Math.min(1, v));
 
-  // Fine light and dark specks, like paper grain catching the pastel. Laid over every frame.
+  // Fine light and dark specks, like paper grain catching the pastel. Laid over the finished picture.
   const grain = (() => {
     const rand = seeded(3);
     const size = 128;
@@ -197,12 +193,11 @@
           const strength = inRibbon ? 0.35 : arm;
           color = SWIRL[Math.min(3, Math.floor(strength * 3 + rand() * 1.4))];
           if (rand() < 0.07) {
-            // A bright dash. These are the ones that move, so they are kept out of the still layer.
+            // A bright dash, drawn last so it sits on top of the darker strokes.
             const accent = {
               color: pick(ACCENT),
               length: between(12, 18),
               width: between(3, 4.5),
-              speed: DRIFT_SPEED * between(0.6, 1.4),
             };
             if (inRibbon) accents.push({ ...accent, ribbon: true, x, offset: y - ribbonY(x) });
             else accents.push({ ...accent, d: Math.max(d, 20), theta });
@@ -214,13 +209,13 @@
       }
     }
 
-    // Stars and sparkles are remembered rather than painted, so they can twinkle.
+    // Stars and sparkles go on top of the sky layer.
     const stars = [];
     for (let i = 0; i < (W * H) / 7000; i++) {
       const x = rand() * W;
       const y = rand() * H;
       if (y > hillY(x) - 12) continue;
-      stars.push({ x, y, r: between(0.6, 1.9), alpha: between(0.5, 1), phase: between(0, 6.28), rate: between(0.4, 1.3) });
+      stars.push({ x, y, r: between(0.6, 1.9), alpha: between(0.35, 0.85) });
     }
 
     const sparkles = [];
@@ -232,9 +227,7 @@
         x,
         y,
         size: between(7, 15),
-        color: sparkles.length % 4 === 3 ? "#dc9cc6" : "#e5deee",
-        phase: between(0, 6.28),
-        rate: between(0.5, 1.1),
+        color: sparkles.length % 4 === 3 ? "#9a6489" : "#b4abc2",
         // Three slightly offset passes give the chalky, hand-filled edge.
         jitter: [0, 1, 2].map(() => [between(-0.8, 0.8), between(-0.8, 0.8)]),
       });
@@ -258,7 +251,7 @@
       dash(ground, x, between(top + 5, H), slope + between(-0.25, 0.25), between(14, 30), between(5, 9), pick(GRASS), between(0.5, 0.85));
     }
 
-    // Blades across the hill. Most are still; about a third, and the fringe along the top, sway.
+    // Blades across the hill, then a fringe of them along the top edge.
     const blades = [];
     for (let i = 0; i < (W * hillH) / 40; i++) {
       const x = rand() * W;
@@ -271,8 +264,7 @@
         color: pick(GRASS),
         alpha: between(0.6, 0.95),
       };
-      if (rand() < 0.33) blades.push(b);
-      else blade(ground, b.x, b.y, b.length, b.lean, b.width, b.color, b.alpha);
+      blade(ground, b.x, b.y, b.length, b.lean, b.width, b.color, b.alpha);
     }
     for (let x = -2; x < W + 2; x += between(2, 4.5)) {
       blades.push({ x, y: hillY(x) + 3, length: between(6, 15), lean: between(-5, 5), width: between(1.8, 3.2), color: pick(GRASS), alpha: 0.95 });
@@ -282,7 +274,7 @@
     for (let i = 0; i < W / 36; i++) {
       const x = rand() * W;
       ground.globalAlpha = 0.9;
-      ground.fillStyle = rand() < 0.2 ? "#dc9cc6" : "#e5deee";
+      ground.fillStyle = rand() < 0.2 ? "#9a6489" : "#b4abc2";
       ground.beginPath();
       ground.arc(x, between(hillY(x) + 8, H - 4), between(1.1, 2.1), 0, Math.PI * 2);
       ground.fill();
@@ -291,8 +283,7 @@
     scene = { W, H, dpr, skyEl, hillLayerEl, accents, stars, sparkles, blades, cx, cy, ribbonEnd, ribbonY, clearOfText };
   }
 
-  // Draws one frame. `t` is seconds since the animation started; 0 gives the still picture.
-  function draw(t) {
+  function draw() {
     const s = scene;
     ctx.setTransform(s.dpr, 0, 0, s.dpr, 0, 0);
     ctx.lineCap = "round";
@@ -302,34 +293,32 @@
     for (const a of s.accents) {
       let x, y, angle, fade = 1;
       if (a.ribbon) {
-        x = (a.x + a.speed * t) % s.ribbonEnd;
+        x = a.x;
         y = s.ribbonY(x) + a.offset;
         angle = Math.atan2(s.ribbonY(x + 4) - s.ribbonY(x), 4);
         fade = clamp01(Math.min(x, s.ribbonEnd - x) / 40);
       } else {
-        const theta = a.theta + (a.speed * t) / a.d;
-        x = s.cx + Math.cos(theta) * a.d;
-        y = s.cy + Math.sin(theta) * a.d;
-        angle = theta + Math.PI / 2 + 0.22;
+        x = s.cx + Math.cos(a.theta) * a.d;
+        y = s.cy + Math.sin(a.theta) * a.d;
+        angle = a.theta + Math.PI / 2 + 0.22;
       }
       fade *= s.clearOfText(x, y);
       if (fade > 0.02) dash(ctx, x, y, angle, a.length, a.width, a.color, 0.95 * fade);
     }
 
-    ctx.fillStyle = "#e5deee";
+    ctx.fillStyle = "#b4abc2";
     for (const st of s.stars) {
-      ctx.globalAlpha = st.alpha * (0.65 + 0.35 * Math.sin(st.phase + t * st.rate));
+      ctx.globalAlpha = st.alpha;
       ctx.beginPath();
       ctx.arc(st.x, st.y, st.r, 0, Math.PI * 2);
       ctx.fill();
     }
 
     for (const sp of s.sparkles) {
-      const pulse = Math.sin(sp.phase + t * sp.rate);
-      const size = sp.size * (1 + 0.1 * pulse);
+      const size = sp.size;
       const k = size * 0.14;
       ctx.fillStyle = sp.color;
-      ctx.globalAlpha = 0.5 + 0.12 * pulse;
+      ctx.globalAlpha = 0.5;
       for (const [jx, jy] of sp.jitter) {
         const x = sp.x + jx;
         const y = sp.y + jy;
@@ -346,54 +335,15 @@
     ctx.globalAlpha = 1;
     ctx.drawImage(s.hillLayerEl, 0, 0, s.W, s.H);
 
-    // A slow breeze: a wave of lean that travels across the hill.
-    for (const b of s.blades) {
-      const wind = Math.sin(t * 0.9 - b.x * 0.012) + 0.4 * Math.sin(t * 1.7 + b.x * 0.05 + b.y * 0.1);
-      blade(ctx, b.x, b.y, b.length, b.lean + wind * SWAY, b.width, b.color, b.alpha);
-    }
+    for (const b of s.blades) blade(ctx, b.x, b.y, b.length, b.lean, b.width, b.color, b.alpha);
 
     ctx.globalAlpha = 1;
     ctx.fillStyle = grain;
     ctx.fillRect(0, 0, s.W, s.H);
   }
 
-  // ----- Running it -----
-  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
-  let frameId = 0;
-  let startTime = 0;
-  let lastFrame = 0;
-  let onScreen = true;
-
-  const tick = (now) => {
-    frameId = requestAnimationFrame(tick);
-    if (now - lastFrame < FRAME_MS) return;
-    lastFrame = now;
-    if (!startTime) startTime = now;
-    draw((now - startTime) / 1000);
-  };
-
-  // Animate only when it's wanted and visible; otherwise show the still picture.
-  const update = () => {
-    cancelAnimationFrame(frameId);
-    frameId = 0;
-    if (reduceMotion.matches) {
-      startTime = 0;
-      draw(0);
-    } else if (onScreen) {
-      frameId = requestAnimationFrame(tick);
-    }
-  };
-
   build();
-  draw(0);
-  update();
-
-  reduceMotion.addEventListener("change", update);
-
-  new IntersectionObserver(([entry]) => {
-    onScreen = entry.isIntersecting;
-    update();
-  }).observe(hero);
+  draw();
 
   let lastW = hero.clientWidth;
   let lastH = hero.clientHeight;
@@ -405,7 +355,7 @@
       lastW = hero.clientWidth;
       lastH = hero.clientHeight;
       build();
-      draw(0);
+      draw();
     }, 120);
   }).observe(hero);
 })();
