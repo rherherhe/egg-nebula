@@ -22,6 +22,14 @@ if (hero) {
   hero.prepend(switcher);
 }
 
+// The header is clear at the very top of the page and turns solid once you scroll.
+const header = document.querySelector(".site-header");
+if (header) {
+  const onScroll = () => header.classList.toggle("is-scrolled", window.scrollY > 8);
+  window.addEventListener("scroll", onScroll, { passive: true });
+  onScroll();
+}
+
 // Mobile nav
 const navToggle = document.querySelector(".nav-toggle");
 const nav = document.querySelector(".site-nav");
