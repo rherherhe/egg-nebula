@@ -189,6 +189,17 @@ a:hover {
   color: var(--white);
 }
 
+/* For things that are announced but not ready yet. */
+.btn.is-disabled {
+  border-color: var(--line);
+  color: var(--muted);
+  cursor: default;
+}
+
+.btn.is-disabled:hover {
+  transform: none;
+}
+
 .sparkle {
   position: absolute;
   width: var(--s, 28px);
@@ -611,6 +622,37 @@ a:hover {
   }
 }
 
+/* ---------- Our Perspective ---------- */
+
+.perspective {
+  text-align: center;
+  border-top: 2px solid var(--line);
+}
+
+.perspective .wrap {
+  max-width: 44em;
+}
+
+.perspective p {
+  font-weight: 300;
+  color: var(--muted);
+}
+
+.perspective .perspective-lead {
+  font-size: clamp(1.25rem, 2.8vw, 1.7rem);
+  font-weight: 500;
+  line-height: 1.4;
+  color: var(--white);
+  text-wrap: balance;
+}
+
+.perspective .perspective-line {
+  font-size: clamp(1.1rem, 2.1vw, 1.3rem);
+  font-weight: 600;
+  color: var(--white);
+  margin-block: 1.4em 0;
+}
+
 /* ---------- Cards ---------- */
 
 .cards {
@@ -716,29 +758,52 @@ a.card:hover .card-link {
   overflow: hidden;
 }
 
-.newsletter-form {
-  max-width: 420px;
-  margin-inline: auto;
-  display: grid;
-  gap: 14px;
+/* The sign-up box: a white card on the night sky. */
+.signup {
   position: relative;
   z-index: 2;
+  max-width: 520px;
+  margin-inline: auto;
+  padding: clamp(22px, 4vw, 34px);
+  border-radius: 24px;
+  background: var(--white);
+  color: var(--night);
+  text-align: center;
 }
 
-.field label {
-  display: block;
-  font-weight: 500;
-  margin-bottom: 4px;
+.signup h3 {
+  font-size: clamp(1.25rem, 2.6vw, 1.5rem);
+}
+
+.signup > p {
+  color: var(--ink-muted);
+  font-size: 0.95rem;
+}
+
+.signup :focus-visible {
+  outline-color: var(--purple);
+}
+
+.newsletter-form {
+  display: grid;
+  gap: 12px;
+  margin-top: 1.2em;
 }
 
 .field input {
   width: 100%;
   padding: 12px 18px;
   border-radius: 999px;
-  border: 2px solid var(--white);
+  border: 2px solid var(--night);
   background: var(--white);
   color: var(--night);
   font: inherit;
+  text-align: center;
+}
+
+.field input::placeholder {
+  color: var(--ink-muted);
+  opacity: 1;
 }
 
 .field input:focus-visible {
@@ -751,8 +816,11 @@ a.card:hover .card-link {
   margin-top: 6px;
 }
 
+.form-note:empty {
+  display: none;
+}
+
 .form-note {
-  min-height: 1.7em;
   margin: 0;
   text-align: center;
   font-weight: 500;
