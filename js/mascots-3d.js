@@ -77,8 +77,8 @@ function init(holder) {
     return mesh;
   };
 
-  // Each mascot has a `body` that leans, and `eyes` and `mouth` groups that turn about the
-  // middle of the head so the features slide over its surface.
+  // Each mascot has a `look` that slides its eyes and mouth over its face, and a `lean`
+  // that tips its body the same way.
   const mascots = [];
 
   // ----- Nilly: an egg standing upright, with a pink belly -----
@@ -100,20 +100,46 @@ function init(holder) {
     belly.position.set(0, 0.86, 0.37);
     body.add(belly);
 
+    // An egg is not a ball, so turning the face about its middle would sink the features
+    // into the shell. Instead each one is re-seated on the egg’s surface wherever it looks.
+    const seat = (mesh, around, up, proud) => {
+      const s = Math.sqrt(1 - up * up);
+      const r = s * (1 - 0.18 * up);
+      const slope = (-up / s) * (1 - 0.18 * up) - 0.18 * s; // how the radius changes with height
+      const len = Math.hypot(half, slope);
+      const out = half / len;
+      const rise = -slope / len;
+      const radius = r + out * proud;
+      mesh.position.set(radius * Math.sin(around), up * half + rise * proud, radius * Math.cos(around));
+      mesh.rotation.order = "YXZ";
+      mesh.rotation.set(-Math.atan2(rise, out), around, mesh.rotation.z);
+    };
+
     const eyes = new THREE.Group();
     eyes.position.set(0, half, 0);
-    eyes.add(eye(0.075, -0.3, 0.66, 0.75, -0.3), eye(0.075, 0.3, 0.66, 0.75, -0.3));
+    const leftEye = eye(0.075, -0.3, 0.66, 0.75, -0.3);
+    const rightEye = eye(0.075, 0.3, 0.66, 0.75, -0.3);
+    eyes.add(leftEye, rightEye);
 
     const mouth = new THREE.Group();
     mouth.position.set(0, half, 0);
-    mouth.add(smile(0.085, 0.54, 0.87, -0.3));
+    const grin = smile(0.085, 0.54, 0.87, -0.3);
+    mouth.add(grin);
+
+    const look = (yaw, pitch) => {
+      const up = 0.5 - pitch * 0.9;
+      seat(leftEye, -0.38 + yaw, up, 0.02);
+      seat(rightEye, 0.38 + yaw, up, 0.02);
+      seat(grin, yaw * 0.6, 0.41 - pitch * 0.55, 0.03);
+    };
+    look(0, 0);
 
     body.add(eyes, mouth);
     nilly.add(body, shadow(3.4, 1.9));
     nilly.position.set(1.0, 0, 0.6);
     scene.add(nilly);
 
-    mascots.push({ eyes, mouth, body, lean: (yaw, pitch) => body.rotation.set(pitch * 0.3, yaw * 0.25, -yaw * 0.22) });
+    mascots.push({ eyes, look, lean: (yaw, pitch) => body.rotation.set(pitch * 0.3, yaw * 0.25, -yaw * 0.22) });
   }
 
   // ----- Sunny: a fried egg lying on the grass, face on the yolk -----
@@ -165,7 +191,12 @@ function init(holder) {
     sunny.position.set(-1.1, 0, 1.0);
     scene.add(sunny);
 
-    mascots.push({ eyes, mouth, body, lean: (yaw, pitch) => body.rotation.set(pitch * 0.25, yaw * 0.5, -yaw * 0.2) });
+    // The yolk is close enough to a ball that turning the face about its middle works.
+    const look = (yaw, pitch) => {
+      eyes.rotation.set(pitch, yaw, 0);
+      mouth.rotation.set(pitch * 0.6, yaw * 0.6, 0);
+    };
+    mascots.push({ eyes, look, lean: (yaw, pitch) => body.rotation.set(pitch * 0.25, yaw * 0.5, -yaw * 0.2) });
   }
 
   for (const m of mascots) Object.assign(m, { yaw: 0, pitch: 0, targetYaw: 0, targetPitch: 0 });
@@ -179,9 +210,8 @@ function init(holder) {
     for (const m of mascots) {
       m.yaw += (m.targetYaw - m.yaw) * 0.16;
       m.pitch += (m.targetPitch - m.pitch) * 0.16;
-      m.eyes.rotation.set(m.pitch, m.yaw, 0);
-      // The mouth trails the eyes a little, which reads as the whole face turning.
-      m.mouth.rotation.set(m.pitch * 0.6, m.yaw * 0.6, 0);
+      // Eyes lead and the mouth trails a little, which reads as the whole face turning.
+      m.look(m.yaw, m.pitch);
       m.lean(m.yaw, m.pitch);
       if (Math.abs(m.targetYaw - m.yaw) + Math.abs(m.targetPitch - m.pitch) > 0.001) moving = true;
     }
