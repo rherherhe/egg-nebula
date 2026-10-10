@@ -42,9 +42,6 @@
 
   <main id="main">
     <section class="hero">
-      <div class="stars" data-count="90"></div>
-      <span class="streak" style="--c: var(--purple); --w: 260px; left: -110px; top: 5%"></span>
-      <span class="streak" style="--c: var(--pink); --w: 200px; --h: 28px; right: 6%; top: 5%"></span>
 
       <div class="wrap">
         <div class="hero-copy">
@@ -58,9 +55,6 @@
         </div>
 
         <div class="hero-scene" aria-hidden="true">
-          <svg class="sparkle" style="--s: 34px; left: 8%; top: 4%"><use href="#sparkle"/></svg>
-          <svg class="sparkle sparkle--teal" style="--s: 26px; --d: 1.5s; right: 6%; top: 18%"><use href="#sparkle"/></svg>
-          <svg class="sparkle" style="--s: 18px; --d: 3s; left: 38%; top: 22%"><use href="#sparkle"/></svg>
           <img class="sunny" src="assets/mascots/sunny-trim.png" alt="" width="720" height="443">
           <img class="nilly" src="assets/mascots/nilly-trim.png" alt="" width="640" height="833">
         </div>
@@ -69,6 +63,7 @@
       <svg class="hill" viewBox="0 0 1440 140" preserveAspectRatio="none" aria-hidden="true">
         <path d="M0 62C240 14 520 0 760 20c280 24 480 70 680 50v70H0z"/>
       </svg>
+      <canvas class="hero-canvas" aria-hidden="true"></canvas>
     </section>
 
     <section class="section about" id="about">
@@ -261,5 +256,6 @@
   </footer>
 
   <script src="js/main.js" defer></script>
+  <script src="js/hero-painting.js" defer></script>
 </body>
 </html>
