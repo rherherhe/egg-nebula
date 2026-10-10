@@ -1,7 +1,7 @@
 // Nilly and Sunny as small 3D models, built from basic shapes with three.js.
-// Their eyes slide across their faces to follow the cursor. Nothing else moves, and the
-// scene is only redrawn while the eyes are catching up, so it costs nothing when idle.
-// If WebGL isn't available, the flat PNG mascots in the page stay visible instead.
+// They watch the cursor: eyes and mouth slide across the face, and the body leans a little
+// the same way. The scene is only redrawn while they are catching up, so it costs nothing
+// when idle. If WebGL isn't available, the flat PNG mascots in the page stay visible instead.
 import * as THREE from "three";
 
 const WHITE = 0xe5deee;
@@ -54,14 +54,15 @@ function init(holder) {
     return mesh;
   };
 
-  // A soft dark patch on the ground under each mascot.
+  // A soft dark patch on the grass under each mascot, so they sit on it rather than float.
   const shadowTexture = (() => {
     const c = document.createElement("canvas");
     c.width = c.height = 128;
     const g = c.getContext("2d");
-    const fade = g.createRadialGradient(64, 64, 8, 64, 64, 64);
-    fade.addColorStop(0, "rgba(12, 4, 22, 0.55)");
-    fade.addColorStop(1, "rgba(12, 4, 22, 0)");
+    const fade = g.createRadialGradient(64, 64, 6, 64, 64, 64);
+    fade.addColorStop(0, "rgba(8, 3, 16, 0.75)");
+    fade.addColorStop(0.55, "rgba(8, 3, 16, 0.4)");
+    fade.addColorStop(1, "rgba(8, 3, 16, 0)");
     g.fillStyle = fade;
     g.fillRect(0, 0, 128, 128);
     return new THREE.CanvasTexture(c);
@@ -76,38 +77,49 @@ function init(holder) {
     return mesh;
   };
 
+  // Each mascot has a `body` that leans, and `eyes` and `mouth` groups that turn about the
+  // middle of the head so the features slide over its surface.
+  const mascots = [];
+
   // ----- Nilly: an egg standing upright, with a pink belly -----
-  const nilly = new THREE.Group();
   {
+    const nilly = new THREE.Group();
+    const body = new THREE.Group();
     const half = 1.3;
+
     const profile = [];
     for (let i = 0; i <= 48; i++) {
       const t = (i / 48) * Math.PI;
       const up = -Math.cos(t); // -1 at the base, +1 at the tip
       profile.push(new THREE.Vector2(Math.sin(t) * (1 - 0.18 * up), half + up * half));
     }
-    nilly.add(new THREE.Mesh(new THREE.LatheGeometry(profile, 64), white));
+    body.add(new THREE.Mesh(new THREE.LatheGeometry(profile, 64), white));
 
     const belly = new THREE.Mesh(new THREE.SphereGeometry(1, 48, 32), pink);
     belly.scale.set(0.8, 0.82, 0.7);
     belly.position.set(0, 0.86, 0.37);
-    nilly.add(belly);
-
-    nilly.add(smile(0.085, 1.84, 0.87, -0.3));
+    body.add(belly);
 
     const eyes = new THREE.Group();
     eyes.position.set(0, half, 0);
     eyes.add(eye(0.075, -0.3, 0.66, 0.75, -0.3), eye(0.075, 0.3, 0.66, 0.75, -0.3));
-    nilly.add(eyes);
-    nilly.userData.eyes = eyes;
 
-    nilly.add(shadow(3.2, 1.6));
-    nilly.position.set(0.9, 0, 0);
+    const mouth = new THREE.Group();
+    mouth.position.set(0, half, 0);
+    mouth.add(smile(0.085, 0.54, 0.87, -0.3));
+
+    body.add(eyes, mouth);
+    nilly.add(body, shadow(3.4, 1.9));
+    nilly.position.set(1.0, 0, 0.6);
+    scene.add(nilly);
+
+    mascots.push({ eyes, mouth, body, lean: (yaw, pitch) => body.rotation.set(pitch * 0.3, yaw * 0.25, -yaw * 0.22) });
   }
 
   // ----- Sunny: a fried egg lying on the grass, face on the yolk -----
-  const sunny = new THREE.Group();
   {
+    const sunny = new THREE.Group();
+
     const outline = [];
     for (let i = 0; i < 40; i++) {
       const a = (i / 40) * Math.PI * 2;
@@ -129,37 +141,34 @@ function init(holder) {
     puddle.translate(0, 0.07, 0);
     sunny.add(new THREE.Mesh(puddle, white));
 
-    const centre = new THREE.Vector3(-0.05, 0.3, 0);
+    // The yolk is the part that leans; the white stays flat on the ground.
+    const body = new THREE.Group();
+    body.position.set(-0.05, 0.07, 0);
+    const middle = 0.23;
+
     const yolk = new THREE.Mesh(new THREE.SphereGeometry(1, 48, 32), pink);
     yolk.scale.set(0.74, 0.56, 0.68);
-    yolk.position.copy(centre);
-    sunny.add(yolk);
-
-    const face = new THREE.Group();
-    face.position.copy(centre);
-    face.add(smile(0.06, 0.3, 0.6, -0.6));
-    sunny.add(face);
+    yolk.position.y = middle;
 
     const eyes = new THREE.Group();
-    eyes.position.copy(centre);
+    eyes.position.y = middle;
     eyes.add(eye(0.058, -0.23, 0.38, 0.5, -0.7), eye(0.058, 0.23, 0.38, 0.5, -0.7));
-    sunny.add(eyes);
-    sunny.userData.eyes = eyes;
 
-    sunny.add(shadow(4.4, 3));
+    const mouth = new THREE.Group();
+    mouth.position.y = middle;
+    mouth.add(smile(0.06, 0.3, 0.6, -0.6));
+
+    body.add(yolk, eyes, mouth);
+    sunny.add(body, shadow(4.6, 3.2));
     sunny.scale.setScalar(0.86);
     sunny.rotation.y = 0.2;
-    sunny.position.set(-1.1, 0, 0.9);
+    sunny.position.set(-1.1, 0, 1.0);
+    scene.add(sunny);
+
+    mascots.push({ eyes, mouth, body, lean: (yaw, pitch) => body.rotation.set(pitch * 0.25, yaw * 0.5, -yaw * 0.2) });
   }
 
-  scene.add(nilly, sunny);
-  const mascots = [nilly, sunny].map((group) => ({
-    eyes: group.userData.eyes,
-    yaw: 0,
-    pitch: 0,
-    targetYaw: 0,
-    targetPitch: 0,
-  }));
+  for (const m of mascots) Object.assign(m, { yaw: 0, pitch: 0, targetYaw: 0, targetPitch: 0 });
 
   // ----- Drawing, only when something changed -----
   let frame = 0;
@@ -168,16 +177,19 @@ function init(holder) {
   const settle = () => {
     let moving = false;
     for (const m of mascots) {
-      m.yaw += (m.targetYaw - m.yaw) * 0.18;
-      m.pitch += (m.targetPitch - m.pitch) * 0.18;
+      m.yaw += (m.targetYaw - m.yaw) * 0.16;
+      m.pitch += (m.targetPitch - m.pitch) * 0.16;
       m.eyes.rotation.set(m.pitch, m.yaw, 0);
+      // The mouth trails the eyes a little, which reads as the whole face turning.
+      m.mouth.rotation.set(m.pitch * 0.6, m.yaw * 0.6, 0);
+      m.lean(m.yaw, m.pitch);
       if (Math.abs(m.targetYaw - m.yaw) + Math.abs(m.targetPitch - m.pitch) > 0.001) moving = true;
     }
     render();
     frame = moving ? requestAnimationFrame(settle) : 0;
   };
 
-  // Eyes turn toward wherever the pointer is on the page, not just over the mascots.
+  // They look toward wherever the pointer is on the page, not just over the mascots.
   const where = new THREE.Vector3();
   window.addEventListener("pointermove", (event) => {
     const box = renderer.domElement.getBoundingClientRect();

@@ -402,7 +402,7 @@ a:hover {
 .mascots-3d {
   position: absolute;
   right: -4%;
-  bottom: 0;
+  bottom: calc(var(--hill-h) * -0.08);
   width: 128%;
   height: 128%;
   pointer-events: none;
