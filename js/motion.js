@@ -96,25 +96,66 @@
       });
     }
 
-    // ----- The Lab slides up and covers the About section -----
-    // About is held in place while the Lab, with its rounded top, scrolls over it. As it is
-    // covered, About sinks back a little and dims.
+    // ----- About holds still and tells its story in steps; then the Lab slides over it -----
+    // About fills the window and is pinned there. While it is held, scrolling brings in
+    // the middle line and then the last paragraph. After that the Lab, with its rounded
+    // top, scrolls up over it while About sinks back and dims.
+    // (If About is taller than the window, it skips the steps and is just covered.)
     const about = $(".about");
+    let aboutIsStaged = false;
     if (about && $("#lab")) {
-      const fits = () => about.offsetHeight <= window.innerHeight;
-      const cover = {
+      const staged = () => about.offsetHeight <= window.innerHeight + 2;
+      const hold = () => (staged() ? Math.round(window.innerHeight * 1.3) : 0);
+      const coverLength = () => Math.min(about.offsetHeight, window.innerHeight);
+      aboutIsStaged = staged();
+
+      // The Lab is pushed down by the length of the hold, so it arrives when the story is done.
+      // mascots-3d.js reads the same number to pace the mascots' flight.
+      const setHold = () => root.style.setProperty("--about-hold", `${hold()}px`);
+      setHold();
+      ScrollTrigger.addEventListener("refreshInit", setHold);
+      undo.push(() => {
+        ScrollTrigger.removeEventListener("refreshInit", setHold);
+        root.style.removeProperty("--about-hold");
+      });
+
+      const pin = ScrollTrigger.create({
         trigger: about,
-        start: () => (fits() ? "top top" : "bottom bottom"),
-        end: () => `+=${Math.min(about.offsetHeight, window.innerHeight)}`,
+        start: () => (staged() ? "top top" : "bottom bottom"),
+        end: () => `+=${hold() + coverLength()}`,
+        pin: true,
+        pinSpacing: false,
         invalidateOnRefresh: true,
-      };
-      ScrollTrigger.create({ ...cover, pin: true, pinSpacing: false });
-      gsap.to(".about > .wrap, .about > .peek", {
+      });
+
+      if (aboutIsStaged) {
+        const story = gsap.timeline({
+          scrollTrigger: { trigger: about, start: "top top", end: () => `+=${Math.max(hold(), 1)}`, scrub: 0.6, invalidateOnRefresh: true },
+        });
+        // Explicit start and end values: with invalidateOnRefresh, a plain from() would re-read
+        // its end state while the element is still hidden, and animate hidden-to-hidden.
+        story
+          .fromTo(
+            splitAndKeep($(".about-line")),
+            { yPercent: 125, rotation: 6 },
+            { yPercent: 0, rotation: 0, duration: 1, ease: "power3.out", stagger: 0.09 },
+            0.8
+          )
+          .fromTo(
+            ".about-copy > p:last-child",
+            { clipPath: "inset(0% 0% 100% 0%)", y: 40 },
+            { clipPath: "inset(0% 0% 0% 0%)", y: 0, duration: 1.1, ease: "power2.out" },
+            2.6
+          )
+          .to({}, { duration: 0.5 }); // a beat to read before the Lab arrives
+      }
+
+      gsap.to(".about > .wrap", {
         scale: 0.9,
         autoAlpha: 0.25,
         transformOrigin: "50% 40%",
         ease: "none",
-        scrollTrigger: { ...cover, scrub: true },
+        scrollTrigger: { trigger: about, start: () => pin.start + hold(), end: () => pin.end, scrub: true, invalidateOnRefresh: true },
       });
     }
 
@@ -151,9 +192,10 @@
     }
 
     // ----- Paragraphs unroll from the top, like a blind being let down -----
-    const unrolling = $$(
+    const unrolling = $(
       [
-        ".about-copy > *",
+        // (When About tells its story in steps, only its first paragraph unrolls on arrival.)
+        aboutIsStaged ? ".about-copy > p:first-child" : ".about-copy > *",
         ".section-head .lead",
         ".perspective .wrap > p:not(.perspective-lead):not(.perspective-line):not(.section-foot)",
         ".page-head .wrap > *:not(h1):not(.eyebrow)",

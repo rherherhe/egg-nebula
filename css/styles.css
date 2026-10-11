@@ -1261,6 +1261,18 @@ a.card:hover .card-link {
   background: var(--night);
 }
 
+/* About fills the window so it can be held in place while its copy arrives in steps
+   (see motion.js). The Lab waits below by the length of that hold. */
+.has-motion .about {
+  display: flex;
+  align-items: center;
+  min-height: 100vh;
+}
+
+.has-motion #lab {
+  margin-top: var(--about-hold, 0px);
+}
+
 /* A ring that trails the cursor. */
 .cursor-ring {
   position: fixed;

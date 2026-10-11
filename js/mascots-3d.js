@@ -289,11 +289,13 @@ function init(heroSpot) {
         nilly: { x: right.x + right.w * (low ? 0.22 : 0.3), y: right.y - right.h * (low ? -0.2 : 0.5), size: (right.h * 0.86) / nilly.tall, roll: 0.42, tip: 0.14 },
       };
 
-      // The flight runs from just after you start scrolling until About is well into view.
       // (While About is held in place by motion.js, its wrapper still marks its real spot.)
       const about = peekLeft.closest(".pin-spacer") || peekLeft.parentElement;
       const aboutTop = about.getBoundingClientRect().top + window.scrollY;
-      const end = Math.max(200, aboutTop - window.innerHeight * 0.45);
+      // When About is held in place for its story, the flight carries on into that hold,
+      // so they land as the middle line appears. Otherwise they land as About comes into view.
+      const hold = parseFloat(document.documentElement.style.getPropertyValue("--about-hold")) || 0;
+      const end = Math.max(200, hold ? aboutTop + hold * 0.5 : aboutTop - window.innerHeight * 0.45);
       t = smooth(clamp01((window.scrollY - 30) / (end - 30)));
     }
 
