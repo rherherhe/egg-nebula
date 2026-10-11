@@ -1,8 +1,9 @@
-// A drifting starfield for the "Our Perspective" card, drawn by a fragment shader.
+// A quiet starfield for the "Our Perspective" card, drawn by a fragment shader.
 //
-// Four layers of stars at different depths drift at different speeds (a parallax), twinkle,
-// and slowly turn about the middle of the card, against black space. Stars near the
-// cursor are pushed gently away from it, the nearer layers more than the farther ones.
+// It is meant to sit in the background and match the rest of the site: the same night
+// colour, small crisp stars, and a few four-point sparkles. Three layers at different
+// depths drift at different speeds (a slight parallax) and twinkle softly. Stars near the
+// cursor ease away from it a little.
 //
 // If WebGL isn't available the card is simply dark. With reduced motion on, the stars are
 // drawn once and nothing moves.
@@ -23,9 +24,11 @@
     uniform vec2 uMouse;   // in the same units as uv: heights, from the middle of the card
     uniform float uPush;   // 0 when the pointer is away, 1 when it is over the card
 
-    const vec3 SPACE = vec3(0.012, 0.008, 0.02); // very nearly black
+    // The site's own colours: its night sky (a touch deeper, so the card reads as a card),
+    // its off-white, and its two accents.
+    const vec3 NIGHT = vec3(0.075, 0.024, 0.133);
     const vec3 PURPLE = vec3(0.439, 0.176, 0.745);
-    const vec3 PINK = vec3(0.639, 0.306, 0.545);
+    const vec3 PINK = vec3(0.863, 0.612, 0.776);
     const vec3 WHITE = vec3(0.898, 0.871, 0.933);
 
     float hash(vec2 p) {
@@ -49,26 +52,17 @@
       );
     }
 
-    float fbm(vec2 p) {
-      float value = 0.0;
-      float amount = 0.5;
-      for (int i = 0; i < 4; i++) {
-        value += amount * noise(p);
-        p = p * 2.03 + vec2(11.0, 7.0);
-        amount *= 0.5;
-      }
-      return value;
-    }
-
     // One depth of stars. A grid of cells, each maybe holding one star; the neighbouring
-    // cells are checked too so a star's glow isn't cut off at its cell's edge.
-    vec3 layer(vec2 uv, float scale, float seed, float drift, float density, float size, float push) {
-      // Stars near the cursor slide away from it.
+    // cells are checked too so a star isn't cut off at its cell's edge. Most stars are
+    // small crisp dots, like the ones scattered through the rest of the site. A share of
+    // them (the "sparkles" share) are four-point sparkles instead, the site's star motif.
+    vec3 layer(vec2 uv, float scale, float seed, float drift, float density, float size, float push, float sparkles) {
+      // Stars near the cursor slide away from it, a little.
       vec2 away = uv - uMouse;
       float near = exp(-dot(away, away) * 9.0);
       uv -= normalize(away + 1e-4) * near * push * uPush;
 
-      float turn = uTime * 0.006 * (0.6 + seed * 0.1);
+      float turn = uTime * 0.004 * (0.6 + seed * 0.1);
       uv = mat2(cos(turn), -sin(turn), sin(turn), cos(turn)) * uv;
 
       vec2 p = uv * scale + vec2(uTime * drift, -uTime * drift * 0.55) + seed * 37.0;
@@ -80,22 +74,25 @@
         for (int x = -1; x <= 1; x++) {
           vec2 g = vec2(float(x), float(y));
           vec2 cell = id + g;
-          float chance = hash(cell + seed);
-          if (chance > density) continue;
+          if (hash(cell + seed) > density) continue;
 
-          vec2 where = g + (hash2(cell + seed * 3.1) - 0.5) * 0.7;
-          float r = length(f - where);
-          float s = size * (0.5 + hash(cell * 1.7 + seed));
-          float rate = 0.5 + 2.2 * hash(cell + 3.3);
-          float twinkle = 0.62 + 0.38 * sin(uTime * rate + hash(cell) * 40.0);
+          vec2 d = f - (g + (hash2(cell + seed * 3.1) - 0.5) * 0.7);
+          float s = size * (0.55 + 0.9 * hash(cell * 1.7 + seed));
+          float rate = 0.4 + 1.4 * hash(cell + 3.3);
+          float twinkle = 0.75 + 0.25 * sin(uTime * rate + hash(cell) * 40.0);
 
-          float core = smoothstep(s, 0.0, r);
-          float glow = exp(-r / (s * 4.5)) * 0.32;
-          float shade = hash(cell + 8.8);
-          vec3 tint = shade < 0.1 ? mix(PINK, WHITE, 0.45)
-                    : shade < 0.22 ? mix(PURPLE, WHITE, 0.62)
-                    : WHITE;
-          total += tint * (core + glow) * twinkle;
+          float shape;
+          if (hash(cell + 5.5) < sparkles) {
+            // A four-point sparkle: pinched in along the diagonals.
+            float reach = pow(s * 3.4, 0.55);
+            shape = smoothstep(reach, reach * 0.72, pow(abs(d.x), 0.55) + pow(abs(d.y), 0.55));
+          } else {
+            // A dot with a hair of softness at its edge.
+            shape = smoothstep(s, s * 0.45, length(d));
+          }
+
+          vec3 tint = hash(cell + 8.8) < 0.14 ? PINK : WHITE;
+          total += tint * shape * twinkle;
         }
       }
       return total;
@@ -104,18 +101,14 @@
     void main() {
       vec2 uv = (gl_FragCoord.xy - 0.5 * uRes) / uRes.y;
 
-      // Black space, with only a whisper of haze so it isn't perfectly flat.
-      float haze = fbm(uv * 1.7 + vec2(uTime * 0.006, 0.0));
-      vec3 col = SPACE;
-      col += mix(PURPLE, PINK, fbm(uv * 1.1 + 4.0)) * 0.025 * smoothstep(0.4, 0.9, haze);
+      // A wide, soft drift of purple across the card, barely there.
+      float haze = noise(uv * 1.3 + vec2(uTime * 0.005, 3.0)) * 0.6 + noise(uv * 2.7 + 9.0) * 0.4;
+      vec3 col = NIGHT + PURPLE * 0.05 * smoothstep(0.35, 0.85, haze);
 
-      col += layer(uv, 4.5, 1.0, 0.003, 0.34, 0.034, 0.07) * 1.0;
-      col += layer(uv, 8.0, 2.0, 0.006, 0.30, 0.030, 0.045) * 0.9;
-      col += layer(uv, 13.0, 3.0, 0.010, 0.24, 0.028, 0.028) * 0.8;
-      col += layer(uv, 21.0, 4.0, 0.016, 0.18, 0.026, 0.014) * 0.7;
+      col += layer(uv, 6.0, 1.0, 0.003, 0.30, 0.022, 0.040, 0.3) * 0.85;
+      col += layer(uv, 11.0, 2.0, 0.005, 0.26, 0.026, 0.025, 0.0) * 0.65;
+      col += layer(uv, 18.0, 3.0, 0.008, 0.20, 0.030, 0.012, 0.0) * 0.45;
 
-      // Darker toward the corners, so the edges of the card feel deep.
-      col *= 1.0 - 0.55 * smoothstep(0.35, 1.25, length(uv * vec2(0.8, 1.0)));
       gl_FragColor = vec4(col, 1.0);
     }
   `;

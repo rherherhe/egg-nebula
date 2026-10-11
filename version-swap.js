@@ -13,6 +13,10 @@
   window.addEventListener("pagereveal", (event) => {
     const transition = event.viewTransition;
     if (!transition) return;
+    // Skipping a transition rejects its promises; that is expected, not an error.
+    for (const promise of [transition.ready, transition.finished, transition.updateCallbackDone]) {
+      if (promise) promise.catch(() => {});
+    }
 
     // Only the jump between versions gets the wipe. Ordinary links change page instantly.
     const cameFrom = window.navigation && navigation.activation && navigation.activation.from;
@@ -32,9 +36,10 @@
     (document.body || root).append(handle);
     root.classList.add("version-swap", direction);
 
-    transition.finished.finally(() => {
+    const tidy = () => {
       handle.remove();
       root.classList.remove("version-swap", direction);
-    });
+    };
+    transition.finished.then(tidy, tidy);
   });
 })();
