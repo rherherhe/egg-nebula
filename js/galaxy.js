@@ -1,7 +1,7 @@
 // A drifting starfield for the "Our Perspective" card, drawn by a fragment shader.
 //
 // Four layers of stars at different depths drift at different speeds (a parallax), twinkle,
-// and slowly turn about the middle of the card, over a faint purple haze. Stars near the
+// and slowly turn about the middle of the card, against black space. Stars near the
 // cursor are pushed gently away from it, the nearer layers more than the farther ones.
 //
 // If WebGL isn't available the card is simply dark. With reduced motion on, the stars are
@@ -23,7 +23,7 @@
     uniform vec2 uMouse;   // in the same units as uv: heights, from the middle of the card
     uniform float uPush;   // 0 when the pointer is away, 1 when it is over the card
 
-    const vec3 NIGHT = vec3(0.055, 0.016, 0.105);
+    const vec3 SPACE = vec3(0.012, 0.008, 0.02); // very nearly black
     const vec3 PURPLE = vec3(0.439, 0.176, 0.745);
     const vec3 PINK = vec3(0.639, 0.306, 0.545);
     const vec3 WHITE = vec3(0.898, 0.871, 0.933);
@@ -104,10 +104,10 @@
     void main() {
       vec2 uv = (gl_FragCoord.xy - 0.5 * uRes) / uRes.y;
 
-      // A faint haze of purple and pink behind the stars.
+      // Black space, with only a whisper of haze so it isn't perfectly flat.
       float haze = fbm(uv * 1.7 + vec2(uTime * 0.006, 0.0));
-      vec3 col = NIGHT;
-      col += mix(PURPLE, PINK, fbm(uv * 1.1 + 4.0)) * 0.11 * smoothstep(0.34, 0.9, haze);
+      vec3 col = SPACE;
+      col += mix(PURPLE, PINK, fbm(uv * 1.1 + 4.0)) * 0.025 * smoothstep(0.4, 0.9, haze);
 
       col += layer(uv, 4.5, 1.0, 0.003, 0.34, 0.034, 0.07) * 1.0;
       col += layer(uv, 8.0, 2.0, 0.006, 0.30, 0.030, 0.045) * 0.9;

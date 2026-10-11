@@ -690,7 +690,7 @@ a:hover {
   isolation: isolate;
   overflow: hidden;
   border-radius: clamp(24px, 4vw, 44px);
-  background: #0e0420;
+  background: #030205;
   border: 2px solid var(--line);
   padding: clamp(56px, 10vw, 120px) clamp(20px, 5vw, 64px);
 }

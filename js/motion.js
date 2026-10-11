@@ -358,6 +358,8 @@
 
     // ----- Newsletter: the card tips up from the ground; the mascots climb out of the grass -----
     if ($(".signup")) {
+      // Plays through on its own once the card's top edge peeks into view, so the form is
+      // ready to use straight away instead of waiting on more scrolling.
       gsap.from(".signup", {
         rotationX: 60,
         y: 140,
@@ -365,8 +367,9 @@
         autoAlpha: 0,
         transformPerspective: 900,
         transformOrigin: "50% 100%",
-        ease: "none",
-        scrollTrigger: { trigger: ".signup", start: "top 100%", end: "top 62%", scrub: 0.5 },
+        duration: 1.1,
+        ease: "power3.out",
+        scrollTrigger: { trigger: ".signup", start: "top 100%", once: true },
       });
     }
     if ($(".ground")) {
