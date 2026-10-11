@@ -1246,6 +1246,33 @@ a.card:hover .card-link {
   display: inline-block;
 }
 
+/* The Lab is the sheet that slides up over About, so it needs its own solid background. */
+.has-motion #lab {
+  z-index: 2;
+  background: var(--night);
+  border-radius: clamp(24px, 4vw, 44px) clamp(24px, 4vw, 44px) 0 0;
+  box-shadow: 0 -24px 60px rgba(25, 8, 44, 0.5);
+}
+
+.has-motion #lab ~ .section {
+  z-index: 2;
+  background: var(--night);
+}
+
+/* A ring that trails the cursor. */
+.cursor-ring {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 70;
+  width: 26px;
+  height: 26px;
+  border: 2px solid #fff;
+  border-radius: 50%;
+  pointer-events: none;
+  mix-blend-mode: difference;
+}
+
 /* ScrollTrigger measures the page by jumping the scroll position, which CSS smooth scrolling
    would turn into a slow glide and spoil. motion.js smooth-scrolls in-page links itself. */
 html.has-motion {

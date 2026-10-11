@@ -262,6 +262,20 @@
   canvas.addEventListener("pointerup", release);
   canvas.addEventListener("pointercancel", release);
 
+  // Lets other scripts (motion.js) nudge the row, for example in step with page scrolling.
+  root.flexCarousel = {
+    shift(px) {
+      if (drag) return;
+      cancelAnimationFrame(frame);
+      frame = 0;
+      offset = target = offset + px;
+      render();
+    },
+    settle() {
+      if (!drag) moveTo(nearestCentre(offset)[0]);
+    },
+  };
+
   // ----- Start -----
   layout();
 
