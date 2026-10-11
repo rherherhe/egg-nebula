@@ -8,14 +8,20 @@
   <link rel="icon" href="assets/logo-mark.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700&family=Caveat:wght@600;700&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="version-swap.css">
+  <script src="version-swap.js"></script>
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
 
   <svg class="svg-defs" aria-hidden="true" focusable="false">
     <defs>
+      <filter id="rough" x="-5%" y="-20%" width="110%" height="140%">
+        <feTurbulence type="fractalNoise" baseFrequency="0.035" numOctaves="3" seed="4" result="noise"/>
+        <feDisplacementMap in="SourceGraphic" in2="noise" scale="7"/>
+      </filter>
       <symbol id="sparkle" viewBox="0 0 24 24">
         <path d="M12 0c1 8 4 11 12 12-8 1-11 4-12 12-1-8-4-11-12-12 8-1 11-4 12-12z"/>
       </symbol>
@@ -35,6 +41,7 @@
           <li><a href="index.html#lab">Lab</a></li>
           <li><a href="resources.html" aria-current="page">Resources</a></li>
           <li><a href="#contact">Contact</a></li>
+          <li><a class="version-link" href="v2/">See v2</a></li>
         </ul>
       </nav>
     </div>
@@ -43,8 +50,8 @@
   <main id="main">
     <section class="page-head">
       <div class="stars" data-count="70"></div>
-      <span class="streak" style="--c: var(--pink); --w: 220px; right: -50px; top: 18%"></span>
-      <span class="streak" style="--c: var(--purple); --w: 160px; --h: 24px; right: 12%; top: 42%"></span>
+      <span class="streak" style="--c: var(--magenta); --w: 220px; right: -50px; top: 18%"></span>
+      <span class="streak" style="--c: var(--violet); --w: 160px; --h: 24px; right: 12%; top: 42%"></span>
       <svg class="sparkle" style="--s: 30px; right: 30%; top: 16%" aria-hidden="true"><use href="#sparkle"/></svg>
 
       <div class="wrap">
@@ -238,8 +245,5 @@
   </footer>
 
   <script src="js/main.js" defer></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" defer></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" defer></script>
-  <script src="js/motion.js" defer></script>
 </body>
 </html>

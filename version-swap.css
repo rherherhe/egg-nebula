@@ -1,0 +1,206 @@
+/* Shared by both versions of the site. See version-swap.js.
+   The wipe between v1 and v2 is drawn by the browser's View Transitions: it holds a picture
+   of the page you are leaving, and uncovers the new page from one side while a divider
+   rides along the edge. V1 is always on the left of the divider and V2 on the right. */
+
+@view-transition {
+  navigation: auto;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  @view-transition {
+    navigation: none;
+  }
+}
+
+/* ----- The link in the navigation ----- */
+
+.site-nav a.version-link {
+  padding: 4px 14px;
+  border: 2px solid currentColor;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+.site-nav a.version-link::after {
+  display: none;
+}
+
+/* ----- The divider (only in the page during a wipe) ----- */
+
+.swap-handle {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  width: 360px;
+  height: 100vh;
+  pointer-events: none;
+  view-transition-name: swap-handle;
+  font: 700 13px/1 "Lexend", system-ui, sans-serif;
+  letter-spacing: 0.04em;
+  color: #19082c;
+}
+
+/* The line itself, down the middle of the handle. */
+.swap-handle::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 4px;
+  margin-left: -2px;
+  background: #fff;
+  box-shadow: 0 0 24px rgba(25, 8, 44, 0.6);
+}
+
+.swap-handle span {
+  position: relative;
+  flex: 1;
+  white-space: nowrap;
+}
+
+.swap-handle span:first-child {
+  text-align: right;
+}
+
+.swap-handle span::before {
+  content: "";
+  position: absolute;
+  inset: -9px -14px;
+  z-index: -1;
+  border-radius: 999px;
+  background: #fff;
+}
+
+.swap-handle span:first-child::before {
+  left: auto;
+  width: calc(11ch + 28px);
+}
+
+.swap-handle span:last-child::before {
+  right: auto;
+  width: calc(9ch + 28px);
+}
+
+/* The round grip on the line. */
+.swap-handle i {
+  position: relative;
+  flex: none;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 4px 18px rgba(25, 8, 44, 0.5);
+}
+
+.swap-handle i::before,
+.swap-handle i::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  width: 9px;
+  height: 9px;
+  border: solid #19082c;
+  border-width: 0 0 3px 3px;
+}
+
+.swap-handle i::before {
+  left: 12px;
+  transform: translateY(-50%) rotate(45deg);
+}
+
+.swap-handle i::after {
+  right: 12px;
+  transform: translateY(-50%) rotate(-135deg);
+}
+
+/* ----- The wipe ----- */
+
+/* The page being left stays put underneath; the new page is uncovered on top of it. */
+html.version-swap::view-transition-old(root) {
+  animation: swap-hold 1.4s both;
+  mix-blend-mode: normal;
+}
+
+html.version-swap::view-transition-new(root) {
+  mix-blend-mode: normal;
+}
+
+html.version-swap::view-transition-new(swap-handle) {
+  animation: none;
+}
+
+/* Going to V2: it is uncovered from the right, and the divider travels right to left. */
+html.to-v2::view-transition-new(root) {
+  animation: swap-from-right 1.4s cubic-bezier(0.76, 0, 0.24, 1) both;
+}
+
+html.to-v2::view-transition-group(swap-handle) {
+  animation: swap-handle-leftward 1.4s cubic-bezier(0.76, 0, 0.24, 1) both;
+}
+
+/* Going back to V1: it is uncovered from the left, and the divider travels left to right. */
+html.to-v1::view-transition-new(root) {
+  animation: swap-from-left 1.4s cubic-bezier(0.76, 0, 0.24, 1) both;
+}
+
+html.to-v1::view-transition-group(swap-handle) {
+  animation: swap-handle-rightward 1.4s cubic-bezier(0.76, 0, 0.24, 1) both;
+}
+
+@keyframes swap-hold {
+  from,
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes swap-from-right {
+  from {
+    clip-path: inset(0 0 0 100%);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+@keyframes swap-from-left {
+  from {
+    clip-path: inset(0 100% 0 0);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+/* The handle is 360px wide with its line in the middle, hence the 180px.
+   It is moved with `left` rather than a transform on purpose: the browser runs transform
+   animations on a separate, faster path than clip-path ones, and the divider would run a
+   frame or two ahead of the edge it is meant to sit on. */
+@keyframes swap-handle-leftward {
+  from {
+    left: calc(100vw - 180px);
+    transform: none;
+  }
+  to {
+    left: -180px;
+    transform: none;
+  }
+}
+
+@keyframes swap-handle-rightward {
+  from {
+    left: -180px;
+    transform: none;
+  }
+  to {
+    left: calc(100vw - 180px);
+    transform: none;
+  }
+}

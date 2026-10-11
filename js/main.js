@@ -2,34 +2,6 @@
 // While this is empty, the form tells visitors honestly that sign-ups aren't open yet.
 const NEWSLETTER_ENDPOINT = "";
 
-// Hero background variations. Each has its own link (?hero=nebula and so on) so they can be
-// compared side by side; hero-shader.js and hero-painting.js read the choice from <html data-hero>.
-const HERO_VARIANTS = { painted: "Painted", nebula: "Nebula", aurora: "Aurora", swirl: "Swirl" };
-const hero = document.querySelector(".hero");
-if (hero) {
-  const asked = new URLSearchParams(location.search).get("hero");
-  const current = Object.hasOwn(HERO_VARIANTS, asked) ? asked : "painted";
-  document.documentElement.dataset.hero = current;
-
-  const switcher = document.createElement("nav");
-  switcher.className = "hero-switcher";
-  switcher.setAttribute("aria-label", "Hero background");
-  switcher.innerHTML =
-    "<span>Background</span>" +
-    Object.entries(HERO_VARIANTS)
-      .map(([key, label]) => `<a href="?hero=${key}"${key === current ? ` aria-current="true"` : ""}>${label}</a>`)
-      .join("");
-  hero.prepend(switcher);
-}
-
-// The header is clear at the very top of the page and turns solid once you scroll.
-const header = document.querySelector(".site-header");
-if (header) {
-  const onScroll = () => header.classList.toggle("is-scrolled", window.scrollY > 8);
-  window.addEventListener("scroll", onScroll, { passive: true });
-  onScroll();
-}
-
 // Mobile nav
 const navToggle = document.querySelector(".nav-toggle");
 const nav = document.querySelector(".site-nav");
@@ -83,54 +55,6 @@ if (form) {
     } catch {
       note.textContent = "That didn't go through. Please try again in a bit.";
     }
-  });
-}
-
-// The telescope by the footer can be pointed up and down: drag it, or focus it and use the
-// arrow keys. It is exposed to assistive technology as a slider.
-const telescope = document.querySelector(".telescope");
-if (telescope) {
-  const tube = telescope.querySelector(".telescope-tube");
-  const PIVOT = { x: 82, y: 84 }; // where the tube sits on the tripod, in the drawing's own units
-  const LOWEST = 0;
-  const HIGHEST = 80;
-  let angle = 30; // degrees above the horizon
-
-  const point = (degrees) => {
-    angle = Math.max(LOWEST, Math.min(HIGHEST, Math.round(degrees)));
-    tube.setAttribute("transform", `rotate(${-angle} ${PIVOT.x} ${PIVOT.y})`);
-    telescope.setAttribute("aria-valuenow", angle);
-    telescope.setAttribute("aria-valuetext", `${angle} degrees above the horizon`);
-  };
-
-  // Aim along the line from the pivot to the pointer. Grabbing the eyepiece end (left of the
-  // pivot) works too: the big end then points the opposite way.
-  const aim = (event) => {
-    const box = telescope.getBoundingClientRect();
-    let dx = ((event.clientX - box.left) / box.width) * 160 - PIVOT.x;
-    let dy = ((event.clientY - box.top) / box.height) * 180 - PIVOT.y;
-    if (dx < 0) {
-      dx = -dx;
-      dy = -dy;
-    }
-    point((Math.atan2(-dy, dx) * 180) / Math.PI);
-  };
-
-  telescope.addEventListener("pointerdown", (event) => {
-    aim(event);
-    telescope.setPointerCapture(event.pointerId);
-  });
-  telescope.addEventListener("pointermove", (event) => {
-    if (telescope.hasPointerCapture(event.pointerId)) aim(event);
-  });
-
-  telescope.addEventListener("keydown", (event) => {
-    const steps = { ArrowUp: 5, ArrowRight: 5, ArrowDown: -5, ArrowLeft: -5, PageUp: 15, PageDown: -15 };
-    if (event.key in steps) point(angle + steps[event.key]);
-    else if (event.key === "Home") point(LOWEST);
-    else if (event.key === "End") point(HIGHEST);
-    else return;
-    event.preventDefault();
   });
 }
 

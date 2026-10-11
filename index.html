@@ -8,14 +8,20 @@
   <link rel="icon" href="assets/logo-mark.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700&family=Caveat:wght@600;700&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="version-swap.css">
+  <script src="version-swap.js"></script>
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
 
   <svg class="svg-defs" aria-hidden="true" focusable="false">
     <defs>
+      <filter id="rough" x="-5%" y="-20%" width="110%" height="140%">
+        <feTurbulence type="fractalNoise" baseFrequency="0.035" numOctaves="3" seed="4" result="noise"/>
+        <feDisplacementMap in="SourceGraphic" in2="noise" scale="7"/>
+      </filter>
       <symbol id="sparkle" viewBox="0 0 24 24">
         <path d="M12 0c1 8 4 11 12 12-8 1-11 4-12 12-1-8-4-11-12-12 8-1 11-4 12-12z"/>
       </symbol>
@@ -35,6 +41,7 @@
           <li><a href="#lab">Lab</a></li>
           <li><a href="resources.html">Resources</a></li>
           <li><a href="#contact">Contact</a></li>
+          <li><a class="version-link" href="v2/">See v2</a></li>
         </ul>
       </nav>
     </div>
@@ -42,17 +49,26 @@
 
   <main id="main">
     <section class="hero">
+      <div class="stars" data-count="90"></div>
+      <span class="streak" style="--c: var(--violet); --w: 260px; left: -110px; top: 5%"></span>
+      <span class="streak" style="--c: var(--magenta); --w: 200px; --h: 28px; right: 6%; top: 5%"></span>
+      <span class="streak" style="--c: var(--blue); --w: 170px; --h: 24px; right: -40px; top: 13%"></span>
 
       <div class="wrap">
         <div class="hero-copy">
-          <h1>Bringing the stars closer to Filipinos.</h1>
-          <p class="lead">Egg Nebula makes astronomy accessible through science, art, storytelling, and interactive experiences.</p>
+          <p class="eyebrow">Astronomy, from the Philippines</p>
+          <h1>Bringing the stars closer to Filipinos</h1>
+          <p class="lead">through art, storytelling, and immersive digital experiences.</p>
           <div class="hero-actions">
-            <a class="btn" href="#newsletter">Sign up to the newsletter</a>
+            <a class="btn" href="resources.html">Start with tonight's sky</a>
+            <a class="btn btn--ghost" href="#lab">Visit the Lab</a>
           </div>
         </div>
 
         <div class="hero-scene" aria-hidden="true">
+          <svg class="sparkle" style="--s: 34px; left: 8%; top: 4%"><use href="#sparkle"/></svg>
+          <svg class="sparkle sparkle--teal" style="--s: 26px; --d: 1.5s; right: 6%; top: 18%"><use href="#sparkle"/></svg>
+          <svg class="sparkle" style="--s: 18px; --d: 3s; left: 38%; top: 22%"><use href="#sparkle"/></svg>
           <img class="sunny" src="assets/mascots/sunny-trim.png" alt="" width="720" height="443">
           <img class="nilly" src="assets/mascots/nilly-trim.png" alt="" width="640" height="833">
         </div>
@@ -61,24 +77,35 @@
       <svg class="hill" viewBox="0 0 1440 140" preserveAspectRatio="none" aria-hidden="true">
         <path d="M0 62C240 14 520 0 760 20c280 24 480 70 680 50v70H0z"/>
       </svg>
-      <canvas class="hero-canvas" aria-hidden="true"></canvas>
     </section>
 
     <section class="section about" id="about">
-      <img class="peek peek--left" src="assets/mascots/sunny-trim.png" alt="" aria-hidden="true" loading="lazy" width="720" height="443">
-      <img class="peek peek--right" src="assets/mascots/nilly-trim.png" alt="" aria-hidden="true" loading="lazy" width="640" height="833">
       <div class="wrap">
-        <div class="about-stage about-stage--one">
-          <p class="eyebrow">About</p>
-          <h2>You don’t need to know everything to look up.</h2>
-          <div class="about-copy">
-            <p>Maybe you’ve wondered why the Moon changes shape. Maybe you’ve stared at the stars and asked how far away they are. Or maybe you’ve loved space since childhood and want to rediscover that sense of wonder.</p>
-          </div>
+        <p class="eyebrow">About</p>
+        <h2>The sky is for everyone</h2>
+        <!-- TODO: draft copy based on the brand report. Rewrite in your own words. -->
+        <div class="about-copy">
+          <p>Egg Nebula began as a quiet place to look up. When everyday pressure felt heavy, the sky made it feel a little smaller. We wanted to hand that same feeling to someone else.</p>
+          <p>So we explain the night sky the way a friend would: in plain words, with drawings and stories, from where we stand in the Philippines.</p>
         </div>
-        <div class="about-stage about-stage--two about-copy">
-          <p class="about-line">Wherever your curiosity begins, there’s a place for you here.</p>
-          <p>We believe astronomy should be something everyone can enjoy, understand, and connect with. No complicated jargon. No questions too simple. Just a universe full of things worth wondering about.</p>
-        </div>
+        <blockquote>
+          You don't need a telescope or a science degree. Start with the sky above your own roof tonight, and we'll explain what you're seeing.
+        </blockquote>
+
+        <ul class="values">
+          <li>
+            <h3>Accuracy before awe</h3>
+            <p>We check our facts and say so when science doesn't know yet. The real sky is astonishing enough.</p>
+          </li>
+          <li>
+            <h3>No dumb questions</h3>
+            <p>Every level of knowledge is welcome here, including none. Nobody is late or behind.</p>
+          </li>
+          <li>
+            <h3>Rooted here</h3>
+            <p>The sky as seen from the Philippines, with the stories Filipinos have told about it.</p>
+          </li>
+        </ul>
       </div>
     </section>
 
@@ -86,23 +113,23 @@
       <div class="stars" data-count="50"></div>
       <div class="wrap">
         <div class="section-head">
-          <p class="eyebrow">The Lab</p>
-          <h2>What if you could learn about the universe by interacting with it?</h2>
-          <p class="lead">The Egg Nebula Lab is our playground for digital astronomy experiences — interactive apps, immersive explorations, and creative experiments that bring the cosmos to life.</p>
+          <p class="eyebrow">Lab</p>
+          <h2>Things to play with</h2>
+          <p class="lead">Small interactive experiments for getting a feel for space.</p>
         </div>
 
         <div class="cards cards--2">
           <a class="card" href="https://lab.eggnebula.com/planet-sizes" target="_blank" rel="noopener">
             <div class="card-art">
               <svg viewBox="0 0 320 200" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
-                <rect width="320" height="200" fill="#19082c"/>
-                <g>
-                  <circle cx="92" cy="104" r="62" fill="#dc9cc6"/>
-                  <path d="M34 92c36 10 80 12 116 2M38 122c34 8 76 8 108 0" stroke="#a34e8b" stroke-width="7" fill="none" stroke-linecap="round"/>
-                  <ellipse cx="204" cy="112" rx="56" ry="12" fill="none" stroke="#702dbe" stroke-width="6" transform="rotate(-14 204 112)"/>
+                <rect width="320" height="200" fill="#17094a"/>
+                <g filter="url(#rough)">
+                  <circle cx="92" cy="104" r="62" fill="#f5c95c"/>
+                  <path d="M34 92c36 10 80 12 116 2M38 122c34 8 76 8 108 0" stroke="#e0a94a" stroke-width="7" fill="none" stroke-linecap="round"/>
+                  <ellipse cx="204" cy="112" rx="56" ry="12" fill="none" stroke="#a44d88" stroke-width="6" transform="rotate(-14 204 112)"/>
                   <circle cx="204" cy="112" r="34" fill="#e5deee"/>
-                  <circle cx="268" cy="126" r="14" fill="#469b87"/>
-                  <circle cx="296" cy="134" r="7" fill="#702dbe"/>
+                  <circle cx="268" cy="126" r="14" fill="#4a9e8c"/>
+                  <circle cx="296" cy="134" r="7" fill="#2f80c4"/>
                 </g>
               </svg>
             </div>
@@ -116,8 +143,8 @@
           <div class="card card--soon">
             <div class="card-art">
               <svg viewBox="0 0 320 200" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
-                <rect width="320" height="200" fill="#19082c"/>
-                <path d="M48 150l44-64 52 22 38-60 56 30 36-42" fill="none" stroke="#a34e8b" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/>
+                <rect width="320" height="200" fill="#17094a"/>
+                <path d="M48 150l44-64 52 22 38-60 56 30 36-42" fill="none" stroke="#a44d88" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/>
                 <g fill="#e5deee">
                   <circle cx="48" cy="150" r="6"/><circle cx="92" cy="86" r="8"/><circle cx="144" cy="108" r="5"/>
                   <circle cx="182" cy="48" r="7"/><circle cx="238" cy="78" r="5"/><circle cx="274" cy="36" r="8"/>
@@ -131,8 +158,6 @@
             </div>
           </div>
         </div>
-
-        <p class="section-foot"><a class="btn" href="https://lab.eggnebula.com" target="_blank" rel="noopener">Explore the Lab <span aria-hidden="true">↗</span><span class="visually-hidden">(opens in a new tab)</span></a></p>
       </div>
     </section>
 
@@ -140,39 +165,38 @@
       <div class="wrap">
         <div class="section-head">
           <p class="eyebrow">Resources</p>
-          <h2>Big ideas, made visual.</h2>
-          <p class="lead">Explore our growing collection of astronomy infographics designed to make the universe easier to understand.</p>
+          <h2>Start here, start anywhere</h2>
+          <p class="lead">Illustrated guides to the night sky. Pick whichever one you're curious about.</p>
         </div>
 
-      </div>
-
-      <div class="flex-carousel" data-flex-carousel>
-        <ul class="flex-carousel-list">
-            <li><a href="resources.html#things-you-can-see"><img src="assets/knowing-the-night-sky/things-you-can-see.jpg" alt="" loading="lazy" width="1582" height="2048"><span>What can you see in the night sky?</span></a></li>
-            <li><a href="resources.html#north-star"><img src="assets/knowing-the-night-sky/north-star.jpg" alt="" loading="lazy" width="1448" height="2048"><span>The North Star</span></a></li>
-            <li><a href="resources.html#seasonal-skies"><img src="assets/knowing-the-night-sky/seasonal-skies.jpg" alt="" loading="lazy" width="1448" height="2048"><span>Seasonal skies</span></a></li>
-            <li><a href="resources.html#zodiac"><img src="assets/zodiac/1.jpg" alt="" loading="lazy" width="2048" height="2048"><span>The zodiacal constellations</span></a></li>
-            <li><a href="resources.html#balatik-moroporo"><img src="assets/ethnoastronomy/1.jpg" alt="" loading="lazy" width="1448" height="2048"><span>Balatik &amp; Moroporo</span></a></li>
-            <li><a href="resources.html#bubu-mamahi-uttara"><img src="assets/ethnoastronomy/2.jpg" alt="" loading="lazy" width="1448" height="2048"><span>Bubu &amp; Mamahi Uttara</span></a></li>
-        </ul>
-      </div>
-
-      <div class="wrap">
-        <p class="section-foot"><a class="btn" href="resources.html">Browse Resources</a></p>
-      </div>
-    </section>
-
-    <section class="section perspective" id="perspective">
-      <div class="wrap">
-        <div class="perspective-card" data-galaxy>
-          <div class="perspective-inner">
-            <h2 class="eyebrow">Our Perspective</h2>
-            <p class="perspective-lead">From the stars that guide us to the discoveries that shape our future, astronomy offers new ways to understand our world and our place in the universe.</p>
-            <p>We want more Filipinos to experience that sense of possibility — to see that space is worth exploring, that science belongs to everyone, and that curiosity can take us further than we imagine.</p>
-            <p class="perspective-line">The universe is vast. Our opportunity to understand it starts right here.</p>
-            <p class="section-foot"><span class="btn btn--ghost is-disabled" aria-disabled="true">Read Blog (Coming Soon)</span></p>
-          </div>
+        <div class="cards cards--3">
+          <a class="card" href="resources.html#night-sky">
+            <div class="card-art"><img src="assets/knowing-the-night-sky/things-you-can-see.jpg" alt="" loading="lazy" width="1582" height="2048"></div>
+            <div class="card-body">
+              <h3>Things you can see in the night sky</h3>
+              <p>Twelve things you can spot with just your eyes.</p>
+              <span class="card-link">Read the guide</span>
+            </div>
+          </a>
+          <a class="card" href="resources.html#seasonal-skies">
+            <div class="card-art"><img src="assets/knowing-the-night-sky/seasonal-skies.jpg" alt="" loading="lazy" width="1448" height="2048"></div>
+            <div class="card-body">
+              <h3>Seasonal skies</h3>
+              <p>Why Orion shows up in December and Scorpius in June.</p>
+              <span class="card-link">Read the guide</span>
+            </div>
+          </a>
+          <a class="card" href="resources.html#zodiac">
+            <div class="card-art"><img src="assets/zodiac/1.jpg" alt="" loading="lazy" width="2048" height="2048" style="object-position: center"></div>
+            <div class="card-body">
+              <h3>The zodiacal constellations</h3>
+              <p>The constellations along the Sun's path, and their neighbours.</p>
+              <span class="card-link">See the series</span>
+            </div>
+          </a>
         </div>
+
+        <p class="section-foot"><a class="btn btn--ghost" href="resources.html">See all resources</a></p>
       </div>
     </section>
 
@@ -183,39 +207,36 @@
 
       <div class="wrap">
         <div class="section-head center">
-          <p class="eyebrow">Newsletter</p>
-          <h2>For everyone who’s ever looked up and wondered.</h2>
-          <p class="lead">You don’t have to be an astronomer to love astronomy. You don’t need expensive equipment, years of study, or all the right answers. You just need a little curiosity.</p>
-          <p class="lead">Join us as we explore the universe through science, art, and stories that bring the stars a little closer to home.</p>
+          <h2>Subscribe to the newsletter</h2>
+          <p class="lead">Get a note when there's something new to look up at.</p>
         </div>
 
-        <div class="signup">
-          <h3>A little wonder for your inbox.</h3>
-          <p>Occasional notes from the universe: things to discover, stories worth sharing, and reasons to look up again.</p>
-          <form class="newsletter-form">
-            <div class="field">
-              <label class="visually-hidden" for="nl-email">Email address</label>
-              <input id="nl-email" name="email" type="email" autocomplete="email" placeholder="Your email address" required>
-            </div>
-            <button class="btn" type="submit">Sign up to the newsletter</button>
-            <p class="form-note" role="status" aria-live="polite"></p>
-          </form>
-        </div>
+        <form class="newsletter-form">
+          <div class="field">
+            <label for="nl-name">Name</label>
+            <input id="nl-name" name="name" type="text" autocomplete="name" required>
+          </div>
+          <div class="field">
+            <label for="nl-email">Email</label>
+            <input id="nl-email" name="email" type="email" autocomplete="email" required>
+          </div>
+          <button class="btn" type="submit">Subscribe</button>
+          <p class="form-note" role="status" aria-live="polite"></p>
+        </form>
       </div>
 
-      <div class="ground">
+      <div class="ground" aria-hidden="true">
         <img class="nilly" src="assets/mascots/nilly-trim.png" alt="" loading="lazy" width="640" height="833">
         <div class="stargazers">
           <img class="sunny" src="assets/mascots/sunny-trim.png" alt="" loading="lazy" width="720" height="443">
-          <svg class="telescope" viewBox="0 0 160 180" role="slider" tabindex="0" aria-label="Telescope angle" aria-valuemin="0" aria-valuemax="80" aria-valuenow="30" aria-valuetext="30 degrees above the horizon">
-            <title>Drag to point the telescope up or down</title>
+          <svg class="telescope" viewBox="0 0 160 180">
             <g stroke="#e5deee" stroke-width="7" stroke-linecap="round">
               <path d="M82 92L48 174M82 92v82M82 92l34 82"/>
             </g>
-            <g class="telescope-tube" transform="rotate(-30 82 84)">
+            <g transform="rotate(-30 82 84)" filter="url(#rough)">
               <rect x="22" y="70" width="108" height="28" rx="9" fill="#e5deee"/>
-              <rect x="118" y="62" width="30" height="44" rx="8" fill="#a34e8b"/>
-              <rect x="8" y="76" width="18" height="16" rx="5" fill="#702dbe"/>
+              <rect x="118" y="62" width="30" height="44" rx="8" fill="#a44d88"/>
+              <rect x="8" y="76" width="18" height="16" rx="5" fill="#6f2dbd"/>
             </g>
           </svg>
         </div>
@@ -248,17 +269,5 @@
   </footer>
 
   <script src="js/main.js" defer></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" defer></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" defer></script>
-  <script src="js/motion.js" defer></script>
-  <script src="js/flex-carousel.js" defer></script>
-  <script src="js/galaxy.js" defer></script>
-  <script src="js/footer-grass.js" defer></script>
-  <script src="js/hero-shader.js" defer></script>
-  <script src="js/hero-painting.js" defer></script>
-  <script type="importmap">
-    { "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.min.js" } }
-  </script>
-  <script type="module" src="js/mascots-3d.js"></script>
 </body>
 </html>

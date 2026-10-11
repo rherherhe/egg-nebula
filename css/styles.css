@@ -1,22 +1,27 @@
 /* Egg Nebula
-   Mostly dark blue and white. Pink is the primary accent, purple the secondary; both used sparingly. */
+   Palette sampled from the existing art; texture borrowed from crayon/pastel references. */
 
 :root {
-  /* Brand palette */
-  --night: #19082c;
-  --pink: #a34e8b;
-  --purple: #702dbe;
-  --white: #e5deee;
-  --teal: #469b87;
+  --night: #1a0a30;
+  --indigo: #17094a;
+  --plum: #2c1460;
+  --magenta: #a44d88;
+  --pink: #e39ccb;
+  --violet: #6f2dbd;
+  --lavender: #e5deee;
+  --teal: #4a9e8c;
+  --grass: #2a6e60;
+  --blue: #2f80c4;
+  --star: #f5c95c;
 
-  /* Tints and shades of the palette hues */
-  --pink-light: #dc9cc6;
-  --pink-deep: #8c3d76;
-  --muted: #c4b9d3;
-  --ink-muted: #4b3b60;
-  --line: #3b2a52;
+  --text: #f1ebf7;
+  --muted: #cbc0dc;
+  --line: rgba(229, 222, 238, 0.22);
+  --card: rgba(229, 222, 238, 0.06);
 
-  --font: "Lexend", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-display: "Baloo 2", "Trebuchet MS", system-ui, sans-serif;
+  --font-body: "Nunito", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-hand: "Caveat", "Segoe Print", cursive;
 
   --wrap: 1120px;
   --gutter: clamp(16px, 4vw, 40px);
@@ -36,12 +41,11 @@ html {
 
 body {
   margin: 0;
-  background: var(--night);
-  color: var(--white);
-  font-family: var(--font);
-  font-size: 1rem;
-  font-weight: 400;
-  line-height: 1.7;
+  background: linear-gradient(180deg, var(--night) 0%, var(--indigo) 100%) var(--night);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 1.0625rem;
+  line-height: 1.65;
   -webkit-font-smoothing: antialiased;
   overflow-x: hidden;
 }
@@ -53,7 +57,7 @@ body::after {
   inset: 0;
   z-index: 50;
   pointer-events: none;
-  opacity: 0.25;
+  opacity: 0.32;
   mix-blend-mode: soft-light;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 1.4 -0.35'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
@@ -67,24 +71,25 @@ img {
 h1,
 h2,
 h3 {
-  line-height: 1.15;
+  font-family: var(--font-display);
+  line-height: 1.1;
   margin: 0 0 0.5em;
   text-wrap: balance;
-  letter-spacing: -0.015em;
 }
 
 h1 {
-  font-size: clamp(2.1rem, 5.2vw, 3.6rem);
+  font-size: clamp(2.4rem, 6vw, 4.25rem);
   font-weight: 700;
+  letter-spacing: -0.01em;
 }
 
 h2 {
-  font-size: clamp(1.7rem, 3.6vw, 2.4rem);
+  font-size: clamp(1.9rem, 4vw, 2.75rem);
   font-weight: 700;
 }
 
 h3 {
-  font-size: 1.25rem;
+  font-size: 1.4rem;
   font-weight: 600;
 }
 
@@ -93,18 +98,18 @@ p {
 }
 
 a {
-  color: inherit;
-  text-decoration-color: var(--pink);
+  color: var(--text);
+  text-decoration-color: var(--star);
   text-decoration-thickness: 2px;
-  text-underline-offset: 4px;
+  text-underline-offset: 3px;
 }
 
 a:hover {
-  text-decoration-color: currentColor;
+  color: var(--star);
 }
 
 :focus-visible {
-  outline: 3px solid var(--pink-light);
+  outline: 3px solid var(--star);
   outline-offset: 3px;
   border-radius: 6px;
 }
@@ -128,11 +133,11 @@ a:hover {
   left: 12px;
   top: -60px;
   z-index: 100;
-  background: var(--white);
+  background: var(--star);
   color: var(--night);
   padding: 8px 14px;
   border-radius: 10px;
-  font-weight: 600;
+  font-weight: 700;
 }
 
 .skip-link:focus {
@@ -148,63 +153,66 @@ a:hover {
 /* ---------- Small pieces ---------- */
 
 .eyebrow {
-  font-size: 0.82rem;
-  font-weight: 600;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  line-height: 1.2;
-  color: var(--pink-light);
-  margin: 0 0 0.9em;
+  font-family: var(--font-hand);
+  font-size: 1.55rem;
+  line-height: 1.1;
+  color: var(--star);
+  margin: 0 0 0.35em;
 }
 
 .lead {
-  font-size: clamp(1.05rem, 1.8vw, 1.2rem);
-  font-weight: 300;
+  font-size: clamp(1.1rem, 2vw, 1.3rem);
   color: var(--muted);
-  max-width: 30em;
+  max-width: 34em;
 }
 
 .btn {
+  position: relative;
+  isolation: isolate;
   display: inline-flex;
   align-items: center;
   gap: 0.5em;
-  padding: 0.75em 1.5em;
-  border: 2px solid var(--pink);
-  border-radius: 999px;
-  background: var(--pink);
+  padding: 0.7em 1.5em;
+  border: 0;
+  background: none;
   color: #fff;
-  font: 600 1rem/1.2 var(--font);
+  font: 700 1.05rem/1.2 var(--font-display);
+  letter-spacing: 0.01em;
   text-decoration: none;
   cursor: pointer;
   transition: transform 0.15s ease;
 }
 
+.btn::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: 999px;
+  background: var(--magenta);
+  filter: url(#rough);
+}
+
 .btn:hover {
-  transform: translateY(-2px);
+  color: #fff;
+  transform: translateY(-2px) rotate(-1deg);
 }
 
-.btn--ghost {
-  background: none;
-  border-color: var(--white);
-  color: var(--white);
+.btn--ghost::before {
+  background: transparent;
+  border: 2px solid var(--lavender);
 }
 
-/* For things that are announced but not ready yet. */
-.btn.is-disabled {
-  border-color: var(--line);
-  color: var(--muted);
-  cursor: default;
-}
-
-.btn.is-disabled:hover {
-  transform: none;
+.btn--ghost,
+.btn--ghost:hover {
+  color: var(--lavender);
 }
 
 .sparkle {
   position: absolute;
   width: var(--s, 28px);
   height: var(--s, 28px);
-  fill: var(--white);
+  fill: var(--star);
   pointer-events: none;
   animation: twinkle 4.5s ease-in-out infinite;
   animation-delay: var(--d, 0s);
@@ -216,11 +224,12 @@ a:hover {
 
 .streak {
   position: absolute;
-  height: var(--h, 28px);
-  width: var(--w, 180px);
+  height: var(--h, 34px);
+  width: var(--w, 220px);
   border-radius: 999px;
-  background: var(--c, var(--pink));
+  background: var(--c, var(--magenta));
   transform: rotate(-9deg);
+  filter: url(#rough);
   pointer-events: none;
 }
 
@@ -234,7 +243,7 @@ a:hover {
 .stars i {
   position: absolute;
   border-radius: 50%;
-  background: var(--white);
+  background: #fff;
 }
 
 .stars i.twinkle {
@@ -253,22 +262,24 @@ a:hover {
   }
 }
 
-/* ---------- Header ---------- */
-
-/* Clear over the top of the page; main.js adds .is-scrolled once the page moves. */
-.site-header {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: 40;
-  background: transparent;
-  transition: background-color 0.25s ease;
+@keyframes bob {
+  0%,
+  100% {
+    translate: 0 0;
+  }
+  50% {
+    translate: 0 -8px;
+  }
 }
 
-.site-header.is-scrolled,
-.site-header:has(.site-nav.is-open) {
-  background: var(--night);
+/* ---------- Header ---------- */
+
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  background: rgba(26, 10, 48, 0.82);
+  backdrop-filter: blur(8px);
 }
 
 .site-header .wrap {
@@ -283,10 +294,9 @@ a:hover {
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  font-size: 1.2rem;
-  font-weight: 700;
-  line-height: 1;
+  font: 700 1.35rem/1 var(--font-display);
   text-decoration: none;
+  color: var(--text);
 }
 
 .brand img {
@@ -296,10 +306,10 @@ a:hover {
 .nav-toggle {
   display: none;
   background: none;
-  border: 2px solid var(--white);
+  border: 2px solid var(--line);
   border-radius: 999px;
-  color: var(--white);
-  font: 600 0.95rem var(--font);
+  color: var(--text);
+  font: 700 1rem var(--font-display);
   padding: 6px 16px;
   cursor: pointer;
 }
@@ -312,32 +322,17 @@ a:hover {
   padding: 0;
 }
 
-/* The underline draws in from the left on hover. */
 .site-nav a {
-  position: relative;
-  display: inline-block;
-  font-weight: 500;
+  font: 600 1.08rem var(--font-display);
   text-decoration: none;
   padding: 6px 2px;
+  border-bottom: 3px solid transparent;
 }
 
-.site-nav a::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  height: 3px;
-  border-radius: 2px;
-  background: var(--pink);
-  transform: scaleX(0);
-  transform-origin: left;
-  transition: transform 0.3s ease;
-}
-
-.site-nav a:hover::after,
-.site-nav a[aria-current="page"]::after {
-  transform: scaleX(1);
+.site-nav a:hover,
+.site-nav a[aria-current="page"] {
+  color: var(--text);
+  border-bottom-color: var(--star);
 }
 
 @media (max-width: 640px) {
@@ -375,7 +370,7 @@ a:hover {
 
 .hero {
   position: relative;
-  padding-top: calc(68px + clamp(20px, 4vw, 48px));
+  padding-top: clamp(32px, 6vw, 72px);
   overflow: hidden;
 }
 
@@ -412,36 +407,17 @@ a:hover {
   padding-bottom: calc(var(--hill-h) * 0.32);
 }
 
-/* The flat mascots are the fallback; js/mascots-3d.js swaps in the 3D ones. */
 .hero-scene .sunny {
   width: 46%;
   margin-right: -6%;
   position: relative;
   z-index: 1;
+  animation: bob 7s ease-in-out infinite;
 }
 
 .hero-scene .nilly {
   width: 50%;
-}
-
-.hero-scene.has-3d {
-  display: block;
-  aspect-ratio: 10 / 8;
-  padding-bottom: 0;
-}
-
-.hero-scene.has-3d img {
-  display: none;
-}
-
-/* One canvas fixed over the window, above the hero and About but under the Lab and header. */
-.mascots-3d {
-  position: fixed;
-  inset: 0;
-  z-index: 1;
-  width: 100vw;
-  height: 100vh;
-  pointer-events: none;
+  animation: bob 6s ease-in-out infinite -2s;
 }
 
 .hill {
@@ -451,58 +427,7 @@ a:hover {
   width: 100%;
   height: var(--hill-h);
   z-index: 1;
-  fill: var(--teal);
-}
-
-/* Shader sky (js/hero-shader.js), underneath the painted canvas. */
-.hero-shader {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-}
-
-/* Picks between the hero background variations. */
-.hero-switcher {
-  position: relative;
-  z-index: 3;
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: flex-end;
-  align-items: center;
-  gap: 8px;
-  width: min(var(--wrap), 100% - 2 * var(--gutter));
-  margin: 0 auto clamp(12px, 3vw, 28px);
-  font-size: 0.82rem;
-}
-
-.hero-switcher span {
-  color: var(--muted);
-  margin-right: 4px;
-}
-
-.hero-switcher a {
-  padding: 4px 12px;
-  border: 2px solid var(--white);
-  border-radius: 999px;
-  background: var(--night);
-  font-weight: 500;
-  text-decoration: none;
-}
-
-.hero-switcher a:hover,
-.hero-switcher a[aria-current] {
-  background: var(--white);
-  color: var(--night);
-}
-
-/* Painted by js/hero-painting.js; covers the plain hill above, which is the no-JS fallback. */
-.hero-canvas {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 1;
+  fill: var(--plum);
 }
 
 @media (max-width: 760px) {
@@ -520,7 +445,6 @@ a:hover {
     margin-inline: auto;
     width: 100%;
   }
-
 }
 
 /* ---------- Sections ---------- */
@@ -543,7 +467,7 @@ a:hover {
 }
 
 .section-head {
-  max-width: 36em;
+  max-width: 40em;
   margin-bottom: clamp(24px, 4vw, 44px);
 }
 
@@ -556,176 +480,59 @@ a:hover {
   margin-inline: auto;
 }
 
-/* About is the one light section: white paper under the hill. */
+/* About sits on the hill the mascots stand on. */
 .about {
-  background: var(--white);
-  color: var(--night);
+  background: var(--plum);
+  border-radius: 0 0 50% 50% / 0 0 clamp(30px, 6vw, 80px) clamp(30px, 6vw, 80px);
   text-align: center;
-}
-
-.about .eyebrow {
-  color: var(--pink-deep);
-}
-
-.about :focus-visible {
-  outline-color: var(--purple);
 }
 
 .about-copy {
-  max-width: 30em;
-  margin-inline: auto;
-  font-size: 1.1rem;
-  font-weight: 300;
-}
-
-.about-copy .about-line {
-  font-size: clamp(1.15rem, 2.2vw, 1.4rem);
-  font-weight: 600;
-  line-height: 1.3;
-  margin-block: 1.4em;
-  text-wrap: balance;
-}
-
-.about-copy p:last-child {
-  margin-bottom: 0;
-}
-
-/* Without the staged scroll, the second part simply follows the first. */
-/* The About heading is held to a short line length too. */
-.about h2 {
-  max-width: 15em;
-  margin-inline: auto;
-}
-
-.about-stage--two {
-  margin-top: 1.8em;
-}
-
-.about-stage--two .about-line {
-  margin-top: 0;
-}
-
-/* With it (see motion.js), both parts sit in the same spot: the first leaves, then the
-   second takes its place. */
-.about.is-staged .wrap {
-  display: grid;
-}
-
-.about.is-staged .about-stage {
-  grid-area: 1 / 1;
-  align-self: center;
-  margin-top: 0;
-}
-
-/* Tighter lines, and a gap to the paragraph that is in proportion to the heading's size. */
-.about.is-staged .about-line {
-  font-size: clamp(1.5rem, 3.2vw, 2.3rem);
-  line-height: 1.2;
-  margin-bottom: 0.75em;
-}
-
-.about.is-staged .about-stage--two > p:last-child {
-  line-height: 1.65;
-}
-
-/* The hand-drawn mascots lean in from the edges of the About section. */
-.about {
-  overflow: hidden;
-}
-
-.peek {
-  position: absolute;
-  top: 50%;
-  filter: drop-shadow(0 8px 18px rgba(25, 8, 44, 0.28));
-}
-
-.peek--left {
-  left: 0;
-  width: clamp(150px, 20vw, 270px);
-  transform: translate(calc(-40% + var(--peek, 0px)), -30%) rotate(28deg);
-}
-
-.peek--right {
-  right: 0;
-  width: clamp(130px, 17vw, 230px);
-  transform: translate(calc(42% + var(--peek, 0px)), -50%) rotate(-24deg);
-}
-
-/* When the 3D mascots fly down to About, the drawn ones only mark where they should land. */
-.has-flying-mascots .peek {
-  opacity: 0 !important;
-}
-
-@media (max-width: 900px) {
-  .about {
-    padding-bottom: clamp(120px, 26vw, 170px);
-  }
-
-  .peek {
-    top: auto;
-    bottom: 0;
-  }
-
-  .peek--left {
-    width: 140px;
-    transform: translate(calc(-26% + var(--peek, 0px)), 12%) rotate(18deg);
-  }
-
-  .peek--right {
-    width: 110px;
-    transform: translate(calc(30% + var(--peek, 0px)), 22%) rotate(-20deg);
-  }
-}
-
-/* ---------- Our Perspective ---------- */
-
-.perspective {
-  text-align: center;
-  padding-block: clamp(72px, 11vw, 150px);
-}
-
-/* A card of its own, with the starfield (js/galaxy.js) behind the words. */
-.perspective-card {
-  position: relative;
-  isolation: isolate;
-  overflow: hidden;
-  border-radius: clamp(24px, 4vw, 44px);
-  background: #030205;
-  border: 2px solid var(--line);
-  padding: clamp(56px, 10vw, 120px) clamp(20px, 5vw, 64px);
-}
-
-.galaxy {
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  width: 100%;
-  height: 100%;
-}
-
-.perspective-inner {
   max-width: 38em;
   margin-inline: auto;
+  font-size: 1.15rem;
 }
 
-.perspective p {
-  font-weight: 300;
+.about blockquote {
+  position: relative;
+  max-width: 30em;
+  margin: 1.6em auto 0;
+  font: 600 clamp(1.5rem, 3vw, 1.9rem) / 1.3 var(--font-hand);
+  color: var(--lavender);
+}
+
+.values {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+  margin-top: clamp(32px, 5vw, 56px);
+  padding: 0;
+  list-style: none;
+  text-align: left;
+}
+
+.values li {
+  padding: 20px 22px;
+  border-radius: 20px;
+  background: rgba(26, 10, 48, 0.45);
+}
+
+.values h3 {
+  font-size: 1.2rem;
+  color: var(--star);
+  margin-bottom: 0.25em;
+}
+
+.values p {
+  margin: 0;
   color: var(--muted);
+  font-size: 1rem;
 }
 
-.perspective .perspective-lead {
-  font-size: clamp(1.25rem, 2.8vw, 1.7rem);
-  font-weight: 500;
-  line-height: 1.4;
-  color: var(--white);
-  text-wrap: balance;
-}
-
-.perspective .perspective-line {
-  font-size: clamp(1.1rem, 2.1vw, 1.3rem);
-  font-weight: 600;
-  color: var(--white);
-  margin-block: 1.4em 0;
+@media (max-width: 760px) {
+  .values {
+    grid-template-columns: 1fr;
+  }
 }
 
 /* ---------- Cards ---------- */
@@ -758,29 +565,41 @@ a:hover {
 }
 
 .card {
+  position: relative;
+  isolation: isolate;
   display: flex;
   flex-direction: column;
-  border-radius: 24px;
-  background: var(--white);
-  color: var(--night);
+  color: var(--text);
   text-decoration: none;
   transition: transform 0.2s ease;
 }
 
-a.card:hover {
-  transform: translateY(-4px);
+.card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: 26px;
+  background: var(--card);
+  border: 2px solid var(--line);
+  filter: url(#rough);
 }
 
-a.card:hover .card-link {
-  text-decoration-color: var(--night);
+a.card:hover {
+  color: var(--text);
+  transform: translateY(-4px) rotate(-0.5deg);
+}
+
+a.card:hover::before {
+  border-color: var(--star);
 }
 
 .card-art {
-  margin: 12px 12px 0;
-  border-radius: 14px;
+  margin: 14px 14px 0;
+  border-radius: 18px;
   overflow: hidden;
   aspect-ratio: 16 / 10;
-  background: var(--night);
+  background: var(--indigo);
 }
 
 .card-art img,
@@ -792,138 +611,36 @@ a.card:hover .card-link {
 }
 
 .card-body {
-  padding: 18px 22px 24px;
+  padding: 18px 24px 24px;
 }
 
 .card-body p {
-  color: var(--ink-muted);
-  font-size: 0.95rem;
-  margin-bottom: 0.8em;
+  color: var(--muted);
+  margin-bottom: 0.6em;
 }
 
 .card-link {
-  font-weight: 600;
-  text-decoration: underline;
-  text-decoration-color: var(--pink);
-  text-decoration-thickness: 2px;
-  text-underline-offset: 4px;
+  font: 700 1.05rem var(--font-display);
+  color: var(--star);
+}
+
+.card--soon .card-art {
+  opacity: 0.7;
 }
 
 .tag {
   display: inline-block;
-  font-size: 0.8rem;
-  font-weight: 600;
-  letter-spacing: 0.04em;
-  line-height: 1;
-  color: var(--white);
-  background: var(--purple);
-  padding: 7px 14px;
+  font: 700 1.3rem/1 var(--font-hand);
+  color: var(--night);
+  background: var(--star);
+  padding: 4px 14px 6px;
   border-radius: 999px;
+  rotate: -3deg;
 }
 
 .section-foot {
   margin-top: clamp(24px, 4vw, 40px);
   text-align: center;
-}
-
-/* ---------- Resources carousel (js/flex-carousel.js) ---------- */
-
-.flex-carousel {
-  position: relative;
-  width: min(var(--wrap), 100%);
-  margin-inline: auto;
-}
-
-/* Without JavaScript the covers are a plain row you can scroll sideways. */
-.flex-carousel-list {
-  display: flex;
-  gap: 12px;
-  list-style: none;
-  margin: 0;
-  padding: 0 var(--gutter) 12px;
-  overflow-x: auto;
-}
-
-.flex-carousel-list a {
-  display: block;
-  width: 220px;
-  text-decoration: none;
-  font-weight: 500;
-}
-
-.flex-carousel-list img {
-  width: 100%;
-  aspect-ratio: 5 / 7;
-  object-fit: cover;
-  object-position: top;
-  margin-bottom: 8px;
-}
-
-.flex-carousel.is-ready .flex-carousel-list {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  overflow: hidden;
-  clip-path: inset(50%);
-}
-
-.flex-carousel canvas {
-  display: block;
-  width: 100%;
-  cursor: grab;
-  touch-action: pan-y;
-}
-
-.flex-carousel canvas.is-dragging {
-  cursor: grabbing;
-}
-
-.flex-carousel-caption {
-  position: absolute;
-  left: 50%;
-  translate: -50% 0;
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  max-width: calc(100% - 2 * var(--gutter));
-}
-
-.flex-carousel-caption p {
-  margin: 0;
-  min-width: min(15em, 46vw);
-  text-align: center;
-  line-height: 1.3;
-}
-
-.flex-carousel-title {
-  display: block;
-  font-weight: 600;
-}
-
-.flex-carousel-count {
-  display: block;
-  margin-top: 4px;
-  font-size: 0.8rem;
-  letter-spacing: 0.08em;
-  color: var(--muted);
-}
-
-.flex-carousel-caption button {
-  flex: none;
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-  border: 2px solid var(--white);
-  background: var(--night);
-  color: var(--white);
-  font: 600 1rem var(--font);
-  cursor: pointer;
-}
-
-.flex-carousel-caption button:hover {
-  background: var(--white);
-  color: var(--night);
 }
 
 /* ---------- Newsletter ---------- */
@@ -933,57 +650,39 @@ a.card:hover .card-link {
   overflow: hidden;
 }
 
-/* The sign-up box: a white card on the night sky. */
-.signup {
+.newsletter-form {
+  max-width: 420px;
+  margin-inline: auto;
+  display: grid;
+  gap: 14px;
   position: relative;
   z-index: 2;
-  max-width: 520px;
-  margin-inline: auto;
-  padding: clamp(22px, 4vw, 34px);
-  border-radius: 24px;
-  background: var(--white);
-  color: var(--night);
-  text-align: center;
 }
 
-.signup h3 {
-  font-size: clamp(1.25rem, 2.6vw, 1.5rem);
-}
-
-.signup > p {
-  color: var(--ink-muted);
-  font-size: 0.95rem;
-}
-
-.signup :focus-visible {
-  outline-color: var(--purple);
-}
-
-.newsletter-form {
-  display: grid;
-  gap: 12px;
-  margin-top: 1.2em;
+.field label {
+  display: block;
+  font: 600 1.05rem var(--font-display);
+  margin-bottom: 4px;
 }
 
 .field input {
   width: 100%;
   padding: 12px 18px;
   border-radius: 999px;
-  border: 2px solid var(--night);
-  background: var(--white);
-  color: var(--night);
+  border: 2px solid var(--line);
+  background: rgba(229, 222, 238, 0.08);
+  color: var(--text);
   font: inherit;
-  text-align: center;
 }
 
 .field input::placeholder {
-  color: var(--ink-muted);
-  opacity: 1;
+  color: #a99cc0;
 }
 
 .field input:focus-visible {
-  outline-offset: 2px;
+  outline-offset: 1px;
   border-radius: 999px;
+  border-color: var(--star);
 }
 
 .newsletter-form .btn {
@@ -991,14 +690,12 @@ a.card:hover .card-link {
   margin-top: 6px;
 }
 
-.form-note:empty {
-  display: none;
-}
-
 .form-note {
+  min-height: 1.6em;
   margin: 0;
   text-align: center;
-  font-weight: 500;
+  color: var(--star);
+  font-weight: 600;
 }
 
 .ground {
@@ -1038,48 +735,8 @@ a.card:hover .card-link {
   height: 46px;
   margin-top: -30px;
   background:
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='46'%3E%3Cpath d='M0 46V26l8-14 6 16 8-22 8 24 8-14 8 14 10-22 6 20 8-14 10 12v20z' fill='%23469b87'/%3E%3C/svg%3E") 0 100% / 80px 46px repeat-x;
-}
-
-/* When js/footer-grass.js paints the blades, the strip is taller and the zigzag steps aside.
-   Its bottom edge stays where it was, and clicks pass through to the telescope behind it. */
-.grass.is-painted {
-  height: 84px;
-  margin-top: -68px;
-  background: none;
-  pointer-events: none;
-}
-
-.grass canvas {
-  display: block;
-  width: 100%;
-  height: 100%;
-}
-
-/* The telescope can be dragged up and down (see main.js). */
-.telescope {
-  overflow: visible;
-  cursor: grab;
-  touch-action: none;
-}
-
-.telescope:active {
-  cursor: grabbing;
-}
-
-/* Show a focus ring for keyboard use only, not after a mouse drag. */
-.telescope:focus {
-  outline: none;
-}
-
-.telescope:focus-visible {
-  outline: 3px solid var(--pink-light);
-  outline-offset: 4px;
-  border-radius: 12px;
-}
-
-.telescope-tube {
-  transition: transform 0.12s ease-out;
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='46'%3E%3Cpath d='M0 46V26l8-14 6 16 8-22 8 24 8-14 8 14 10-22 6 20 8-14 10 12v20z' fill='%232a6e60'/%3E%3C/svg%3E") 0 100% / 80px 46px repeat-x,
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='110' height='46'%3E%3Cpath d='M0 46V20l10-16 9 20 12-18 11 22 13-24 10 22 12-16 11 18 12-14 10 10v16z' fill='%234a9e8c'/%3E%3C/svg%3E") 30px 60% / 110px 46px repeat-x;
 }
 
 @media (max-width: 640px) {
@@ -1091,10 +748,7 @@ a.card:hover .card-link {
 /* ---------- Footer ---------- */
 
 .site-footer {
-  position: relative;
-  z-index: 2;
-  background: var(--teal);
-  color: var(--night);
+  background: var(--grass);
   padding-block: 36px 44px;
 }
 
@@ -1106,7 +760,7 @@ a.card:hover .card-link {
 }
 
 .site-footer h2 {
-  font-size: 1.4rem;
+  font-size: 1.5rem;
   margin-bottom: 0.3em;
 }
 
@@ -1124,23 +778,19 @@ a.card:hover .card-link {
 }
 
 .site-footer a {
-  font-weight: 600;
-  text-decoration-color: var(--night);
-}
-
-.site-footer :focus-visible {
-  outline-color: var(--night);
+  font-weight: 700;
 }
 
 .footer-small {
-  font-size: 0.9rem;
+  font-size: 0.95rem;
+  opacity: 0.9;
 }
 
 /* ---------- Resources page ---------- */
 
 .page-head {
   position: relative;
-  padding-block: calc(68px + clamp(32px, 6vw, 72px)) clamp(24px, 4vw, 40px);
+  padding-block: clamp(48px, 8vw, 96px) clamp(24px, 4vw, 40px);
   overflow: hidden;
 }
 
@@ -1161,21 +811,19 @@ a.card:hover .card-link {
 .jump a {
   display: inline-block;
   padding: 6px 16px;
-  border: 2px solid var(--white);
+  border: 2px solid var(--line);
   border-radius: 999px;
-  font-size: 0.95rem;
-  font-weight: 500;
+  font: 600 1rem var(--font-display);
   text-decoration: none;
 }
 
 .jump a:hover {
-  background: var(--white);
-  color: var(--night);
+  border-color: var(--star);
 }
 
 .resource-section {
   padding-block: clamp(36px, 6vw, 72px);
-  border-top: 2px solid var(--line);
+  border-top: 2px dashed var(--line);
 }
 
 .piece {
@@ -1187,22 +835,17 @@ a.card:hover .card-link {
 }
 
 .piece-text {
-  max-width: 34em;
+  max-width: 38em;
 }
 
 .piece-text h3 {
-  font-size: clamp(1.35rem, 2.6vw, 1.7rem);
+  font-size: clamp(1.5rem, 3vw, 1.9rem);
 }
 
 .piece-text h4 {
-  font-size: 1.15rem;
-  font-weight: 600;
-  margin: 1.4em 0 0.4em;
-}
-
-.piece-text p,
-.piece-text dd {
-  font-weight: 300;
+  font: 600 1.25rem var(--font-display);
+  margin: 1.2em 0 0.3em;
+  color: var(--star);
 }
 
 .piece-text dl {
@@ -1210,12 +853,14 @@ a.card:hover .card-link {
 }
 
 .piece-text dt {
-  font-weight: 600;
-  margin-top: 1em;
+  font: 600 1.12rem var(--font-display);
+  color: var(--pink);
+  margin-top: 0.9em;
 }
 
 .piece-text dd {
   margin: 0;
+  color: var(--text);
 }
 
 @media (max-width: 760px) {
@@ -1233,20 +878,20 @@ a.card:hover .card-link {
   width: 100%;
   padding: 0;
   border: 2px solid var(--line);
-  border-radius: 16px;
+  border-radius: 18px;
   overflow: hidden;
-  background: var(--night);
+  background: var(--indigo);
   cursor: zoom-in;
   transition: transform 0.2s ease, border-color 0.2s ease;
 }
 
 .zoom:hover {
-  transform: scale(1.01);
-  border-color: var(--white);
+  transform: rotate(-0.6deg) scale(1.01);
+  border-color: var(--star);
 }
 
 .zoom:focus-visible {
-  border-radius: 16px;
+  border-radius: 18px;
 }
 
 .gallery {
@@ -1271,14 +916,14 @@ a.card:hover .card-link {
   border: 0;
   padding: 0;
   background: transparent;
-  color: var(--white);
+  color: var(--text);
   max-width: min(96vw, 1000px);
   max-height: 96vh;
   overflow: visible;
 }
 
 .lightbox::backdrop {
-  background: rgba(25, 8, 44, 0.92);
+  background: rgba(12, 4, 26, 0.9);
 }
 
 .lightbox img {
@@ -1302,112 +947,21 @@ a.card:hover .card-link {
   min-height: 44px;
   padding: 6px 16px;
   border-radius: 999px;
-  border: 2px solid var(--white);
+  border: 2px solid var(--line);
   background: var(--night);
-  color: var(--white);
-  font: 600 0.95rem var(--font);
+  color: var(--text);
+  font: 700 1rem var(--font-display);
   cursor: pointer;
 }
 
 .lightbox-bar button:hover {
-  background: var(--white);
-  color: var(--night);
+  border-color: var(--star);
 }
 
 .lightbox-count {
-  font-weight: 500;
-  min-width: 5em;
+  font: 600 1.3rem var(--font-hand);
+  min-width: 4em;
   text-align: center;
-}
-
-/* ---------- Motion (js/motion.js, GSAP) ---------- */
-
-.scroll-progress {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: 60;
-  height: 3px;
-  background: var(--pink);
-  transform: scaleX(0);
-  transform-origin: left;
-  pointer-events: none;
-}
-
-/* Words that slide up out of a mask. The padding keeps descenders from being clipped. */
-.word {
-  display: inline-block;
-  overflow: hidden;
-  vertical-align: top;
-  padding-bottom: 0.12em;
-  margin-bottom: -0.12em;
-}
-
-.word > span {
-  display: inline-block;
-}
-
-/* The Lab is the sheet that slides up over About, so it needs its own solid background. */
-.has-motion #lab {
-  z-index: 2;
-  background: var(--night);
-  border-radius: clamp(24px, 4vw, 44px) clamp(24px, 4vw, 44px) 0 0;
-  box-shadow: 0 -24px 60px rgba(25, 8, 44, 0.5);
-}
-
-.has-motion #lab ~ .section {
-  z-index: 2;
-  background: var(--night);
-}
-
-/* About fills the window so it can be held in place while its copy arrives in steps
-   (see motion.js). The Lab waits below by the length of that hold. */
-.has-motion .about {
-  display: flex;
-  align-items: center;
-  min-height: 100vh;
-}
-
-.has-motion #lab {
-  margin-top: var(--about-hold, 0px);
-}
-
-/* A ring that trails the cursor. */
-.cursor-ring {
-  position: fixed;
-  top: 0;
-  left: 0;
-  z-index: 70;
-  width: 26px;
-  height: 26px;
-  border: 2px solid #fff;
-  border-radius: 50%;
-  pointer-events: none;
-  mix-blend-mode: difference;
-}
-
-/* ScrollTrigger measures the page by jumping the scroll position, which CSS smooth scrolling
-   would turn into a slow glide and spoil. motion.js smooth-scrolls in-page links itself. */
-html.has-motion {
-  scroll-behavior: auto;
-}
-
-/* GSAP drives these transforms, so the CSS hover transitions step aside. */
-.has-motion .btn,
-.has-motion .card,
-.has-motion .zoom {
-  transition: none;
-}
-
-.has-motion .btn:hover,
-.has-motion a.card:hover,
-.has-motion .zoom:hover {
-  transform: none;
-}
-
-.has-motion .card {
-  will-change: transform;
 }
 
 @media (prefers-reduced-motion: reduce) {
