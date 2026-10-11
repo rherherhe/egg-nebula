@@ -312,16 +312,32 @@ a:hover {
   padding: 0;
 }
 
+/* The underline draws in from the left on hover. */
 .site-nav a {
+  position: relative;
+  display: inline-block;
   font-weight: 500;
   text-decoration: none;
   padding: 6px 2px;
-  border-bottom: 3px solid transparent;
 }
 
-.site-nav a:hover,
-.site-nav a[aria-current="page"] {
-  border-bottom-color: var(--pink);
+.site-nav a::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 3px;
+  border-radius: 2px;
+  background: var(--pink);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.3s ease;
+}
+
+.site-nav a:hover::after,
+.site-nav a[aria-current="page"]::after {
+  transform: scaleX(1);
 }
 
 @media (max-width: 640px) {
@@ -592,13 +608,13 @@ a:hover {
 .peek--left {
   left: 0;
   width: clamp(130px, 17vw, 230px);
-  transform: translate(-42%, -50%) rotate(24deg);
+  transform: translate(calc(-42% + var(--peek, 0px)), -50%) rotate(24deg);
 }
 
 .peek--right {
   right: 0;
   width: clamp(150px, 20vw, 270px);
-  transform: translate(40%, -30%) rotate(-28deg);
+  transform: translate(calc(40% + var(--peek, 0px)), -30%) rotate(-28deg);
 }
 
 @media (max-width: 900px) {
@@ -613,12 +629,12 @@ a:hover {
 
   .peek--left {
     width: 110px;
-    transform: translate(-30%, 22%) rotate(20deg);
+    transform: translate(calc(-30% + var(--peek, 0px)), 22%) rotate(20deg);
   }
 
   .peek--right {
     width: 140px;
-    transform: translate(26%, 12%) rotate(-18deg);
+    transform: translate(calc(26% + var(--peek, 0px)), 12%) rotate(-18deg);
   }
 }
 
@@ -1200,6 +1216,57 @@ a.card:hover .card-link {
   font-weight: 500;
   min-width: 5em;
   text-align: center;
+}
+
+/* ---------- Motion (js/motion.js, GSAP) ---------- */
+
+.scroll-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 60;
+  height: 3px;
+  background: var(--pink);
+  transform: scaleX(0);
+  transform-origin: left;
+  pointer-events: none;
+}
+
+/* Words that slide up out of a mask. The padding keeps descenders from being clipped. */
+.word {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: top;
+  padding-bottom: 0.12em;
+  margin-bottom: -0.12em;
+}
+
+.word > span {
+  display: inline-block;
+}
+
+/* ScrollTrigger measures the page by jumping the scroll position, which CSS smooth scrolling
+   would turn into a slow glide and spoil. motion.js smooth-scrolls in-page links itself. */
+html.has-motion {
+  scroll-behavior: auto;
+}
+
+/* GSAP drives these transforms, so the CSS hover transitions step aside. */
+.has-motion .btn,
+.has-motion .card,
+.has-motion .zoom {
+  transition: none;
+}
+
+.has-motion .btn:hover,
+.has-motion a.card:hover,
+.has-motion .zoom:hover {
+  transform: none;
+}
+
+.has-motion .card {
+  will-change: transform;
 }
 
 @media (prefers-reduced-motion: reduce) {
