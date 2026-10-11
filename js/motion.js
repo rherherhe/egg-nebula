@@ -84,10 +84,8 @@
       intro
         .from(".hero-copy .lead", { clipPath: "inset(0% 0% 100% 0%)", y: 30, duration: 1 }, 0.75)
         .from(".hero-actions", { scale: 0.5, autoAlpha: 0, duration: 0.9, ease: "elastic.out(1, 0.6)" }, 1.0)
-        .from(".hero-switcher > *", { y: -16, autoAlpha: 0, duration: 0.5, stagger: 0.05 }, 1.0)
-        // The mascots spring up out of the grass with a little squash and stretch.
-        .from(".hero-scene", { yPercent: 55, scaleY: 0.6, transformOrigin: "50% 100%", duration: 1.3, ease: "elastic.out(1, 0.55)" }, 0.5)
-        .from(".hero-scene", { autoAlpha: 0, duration: 0.3 }, 0.5);
+        .from(".hero-switcher > *", { y: -16, autoAlpha: 0, duration: 0.5, stagger: 0.05 }, 1.0);
+      // (The 3D mascots pop up out of the grass on their own; see mascots-3d.js.)
 
       // The headline drifts up and fades as the hero scrolls away.
       gsap.to(".hero-copy", {

@@ -434,13 +434,13 @@ a:hover {
   display: none;
 }
 
-/* A little larger than its column, so the mascots have room to the left. */
+/* One canvas fixed over the window, above the hero and About but under the Lab and header. */
 .mascots-3d {
-  position: absolute;
-  right: -4%;
-  bottom: calc(var(--hill-h) * -0.08);
-  width: 128%;
-  height: 128%;
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  width: 100vw;
+  height: 100vh;
   pointer-events: none;
 }
 
@@ -521,11 +521,6 @@ a:hover {
     width: 100%;
   }
 
-  .mascots-3d {
-    right: 0;
-    width: 100%;
-    height: 100%;
-  }
 }
 
 /* ---------- Sections ---------- */
@@ -607,14 +602,19 @@ a:hover {
 
 .peek--left {
   left: 0;
-  width: clamp(130px, 17vw, 230px);
-  transform: translate(calc(-42% + var(--peek, 0px)), -50%) rotate(24deg);
+  width: clamp(150px, 20vw, 270px);
+  transform: translate(calc(-40% + var(--peek, 0px)), -30%) rotate(28deg);
 }
 
 .peek--right {
   right: 0;
-  width: clamp(150px, 20vw, 270px);
-  transform: translate(calc(40% + var(--peek, 0px)), -30%) rotate(-28deg);
+  width: clamp(130px, 17vw, 230px);
+  transform: translate(calc(42% + var(--peek, 0px)), -50%) rotate(-24deg);
+}
+
+/* When the 3D mascots fly down to About, the drawn ones only mark where they should land. */
+.has-flying-mascots .peek {
+  opacity: 0 !important;
 }
 
 @media (max-width: 900px) {
@@ -628,13 +628,13 @@ a:hover {
   }
 
   .peek--left {
-    width: 110px;
-    transform: translate(calc(-30% + var(--peek, 0px)), 22%) rotate(20deg);
+    width: 140px;
+    transform: translate(calc(-26% + var(--peek, 0px)), 12%) rotate(18deg);
   }
 
   .peek--right {
-    width: 140px;
-    transform: translate(calc(26% + var(--peek, 0px)), 12%) rotate(-18deg);
+    width: 110px;
+    transform: translate(calc(30% + var(--peek, 0px)), 22%) rotate(-20deg);
   }
 }
 
@@ -991,6 +991,8 @@ a.card:hover .card-link {
 /* ---------- Footer ---------- */
 
 .site-footer {
+  position: relative;
+  z-index: 2;
   background: var(--teal);
   color: var(--night);
   padding-block: 36px 44px;

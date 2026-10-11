@@ -1,32 +1,40 @@
 // Nilly and Sunny as small 3D models, built from basic shapes with three.js.
-// They watch the cursor: eyes and mouth slide across the face, and the body leans a little
-// the same way. The scene is only redrawn while they are catching up, so it costs nothing
-// when idle. If WebGL isn't available, the flat PNG mascots in the page stay visible instead.
+//
+// They are drawn on one see-through canvas fixed over the whole window, so they are free to
+// leave the hero. At the top of the page they sit on the grass. As you scroll down they fly
+// to the About section and peek in from its edges: Sunny on the left, Nilly on the right.
+// They also watch the cursor: eyes and mouth slide across the face and the body leans.
+//
+// The scene is only redrawn when something changes (a scroll, a resize, the eyes catching
+// up), so it costs nothing when idle. If WebGL isn't available, the flat PNG mascots in the
+// page stay visible instead. With reduced motion on, they stay on the grass and don't fly.
 import * as THREE from "three";
 
 const WHITE = 0xe5deee;
 const PINK = 0xa34e8b;
 const DARK = 0x19082c;
 
-const holder = document.querySelector(".hero-scene");
-if (holder) {
+const scene2d = document.querySelector(".hero-scene");
+if (scene2d) {
   try {
-    init(holder);
+    init(scene2d);
   } catch (error) {
     console.warn("3D mascots unavailable, showing the flat ones instead.", error);
   }
 }
 
-function init(holder) {
+function init(heroSpot) {
   const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
   renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
-  renderer.domElement.className = "mascots-3d";
-  renderer.domElement.setAttribute("aria-hidden", "true");
+  const canvas = renderer.domElement;
+  canvas.className = "mascots-3d";
+  canvas.setAttribute("aria-hidden", "true");
 
+  // A flat (orthographic) camera where one unit is one screen pixel and the origin is the
+  // middle of the window. That makes "put this mascot at this spot on the page" simple.
   const scene = new THREE.Scene();
-  const camera = new THREE.PerspectiveCamera(22, 1, 0.1, 50);
-  camera.position.set(0, 3.5, 9.6);
-  camera.lookAt(-0.15, 1.05, 0);
+  const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, -3000, 3000);
+  camera.position.z = 1000;
 
   scene.add(new THREE.HemisphereLight(0xffffff, 0x4a3a66, 1.5));
   const sun = new THREE.DirectionalLight(0xffffff, 1.6);
@@ -54,7 +62,7 @@ function init(holder) {
     return mesh;
   };
 
-  // A soft dark patch on the grass under each mascot, so they sit on it rather than float.
+  // A soft dark patch under each mascot, so they sit on the grass rather than float.
   const shadowTexture = (() => {
     const c = document.createElement("canvas");
     c.width = c.height = 128;
@@ -77,13 +85,20 @@ function init(holder) {
     return mesh;
   };
 
-  // Each mascot has a `look` that slides its eyes and mouth over its face, and a `lean`
-  // that tips its body the same way.
-  const mascots = [];
+  // Each mascot is wrapped in a `rig` whose origin is the middle of its body, so it can be
+  // placed, sized and spun as a whole. `look` slides the face; `lean` tips the body.
+  const rigFor = (model, middle) => {
+    const rig = new THREE.Group();
+    rig.rotation.order = "ZXY"; // roll on screen, then tip toward the viewer, then spin
+    model.position.y = -middle;
+    rig.add(model);
+    scene.add(rig);
+    return rig;
+  };
 
   // ----- Nilly: an egg standing upright, with a pink belly -----
-  {
-    const nilly = new THREE.Group();
+  const nilly = (() => {
+    const model = new THREE.Group();
     const body = new THREE.Group();
     const half = 1.3;
 
@@ -115,36 +130,35 @@ function init(holder) {
       mesh.rotation.set(-Math.atan2(rise, out), around, mesh.rotation.z);
     };
 
-    const eyes = new THREE.Group();
-    eyes.position.set(0, half, 0);
+    const face = new THREE.Group();
+    face.position.set(0, half, 0);
     const leftEye = eye(0.075, -0.3, 0.66, 0.75, -0.3);
     const rightEye = eye(0.075, 0.3, 0.66, 0.75, -0.3);
-    eyes.add(leftEye, rightEye);
-
-    const mouth = new THREE.Group();
-    mouth.position.set(0, half, 0);
     const grin = smile(0.085, 0.54, 0.87, -0.3);
-    mouth.add(grin);
+    face.add(leftEye, rightEye, grin);
+    body.add(face);
 
-    const look = (yaw, pitch) => {
-      const up = 0.5 - pitch * 0.9;
-      seat(leftEye, -0.38 + yaw, up, 0.02);
-      seat(rightEye, 0.38 + yaw, up, 0.02);
-      seat(grin, yaw * 0.6, 0.41 - pitch * 0.55, 0.03);
+    const ground = shadow(3.4, 1.9);
+    model.add(body, ground);
+
+    return {
+      rig: rigFor(model, half),
+      eyes: face,
+      ground,
+      tall: 2.6, // model units, used to size it in pixels
+      look(yaw, pitch) {
+        const up = 0.5 - pitch * 0.9;
+        seat(leftEye, -0.38 + yaw, up, 0.02);
+        seat(rightEye, 0.38 + yaw, up, 0.02);
+        seat(grin, yaw * 0.6, 0.41 - pitch * 0.55, 0.03);
+      },
+      lean: (yaw, pitch) => body.rotation.set(pitch * 0.3, yaw * 0.25, -yaw * 0.22),
     };
-    look(0, 0);
+  })();
 
-    body.add(eyes, mouth);
-    nilly.add(body, shadow(3.4, 1.9));
-    nilly.position.set(1.0, 0, 0.6);
-    scene.add(nilly);
-
-    mascots.push({ eyes, look, lean: (yaw, pitch) => body.rotation.set(pitch * 0.3, yaw * 0.25, -yaw * 0.22) });
-  }
-
-  // ----- Sunny: a fried egg lying on the grass, face on the yolk -----
-  {
-    const sunny = new THREE.Group();
+  // ----- Sunny: a fried egg lying flat, face on the yolk -----
+  const sunny = (() => {
+    const model = new THREE.Group();
 
     const outline = [];
     for (let i = 0; i < 40; i++) {
@@ -165,9 +179,9 @@ function init(holder) {
     });
     puddle.rotateX(-Math.PI / 2);
     puddle.translate(0, 0.07, 0);
-    sunny.add(new THREE.Mesh(puddle, white));
+    model.add(new THREE.Mesh(puddle, white));
 
-    // The yolk is the part that leans; the white stays flat on the ground.
+    // The yolk is the part that leans; the white stays flat.
     const body = new THREE.Group();
     body.position.set(-0.05, 0.07, 0);
     const middle = 0.23;
@@ -185,28 +199,126 @@ function init(holder) {
     mouth.add(smile(0.06, 0.3, 0.6, -0.6));
 
     body.add(yolk, eyes, mouth);
-    sunny.add(body, shadow(4.6, 3.2));
-    sunny.scale.setScalar(0.86);
-    sunny.rotation.y = 0.2;
-    sunny.position.set(-1.1, 0, 1.0);
-    scene.add(sunny);
+    const ground = shadow(4.6, 3.2);
+    model.add(body, ground);
 
-    // The yolk is close enough to a ball that turning the face about its middle works.
-    const look = (yaw, pitch) => {
-      eyes.rotation.set(pitch, yaw, 0);
-      mouth.rotation.set(pitch * 0.6, yaw * 0.6, 0);
+    return {
+      rig: rigFor(model, 0.25),
+      eyes,
+      ground,
+      wide: 3.0,
+      // The yolk is close enough to a ball that turning the face about its middle works.
+      look(yaw, pitch) {
+        eyes.rotation.set(pitch, yaw, 0);
+        mouth.rotation.set(pitch * 0.6, yaw * 0.6, 0);
+      },
+      lean: (yaw, pitch) => body.rotation.set(pitch * 0.25, yaw * 0.5, -yaw * 0.2),
     };
-    mascots.push({ eyes, look, lean: (yaw, pitch) => body.rotation.set(pitch * 0.25, yaw * 0.5, -yaw * 0.2) });
+  })();
+
+  const mascots = [nilly, sunny];
+  for (const m of mascots) {
+    Object.assign(m, { yaw: 0, pitch: 0, targetYaw: 0, targetPitch: 0 });
+    m.look(0, 0);
   }
 
-  for (const m of mascots) Object.assign(m, { yaw: 0, pitch: 0, targetYaw: 0, targetPitch: 0 });
+  // ----- Where they are on the page -----
+  const hillEl = document.querySelector(".hero .hill");
+  const peekLeft = document.querySelector(".peek--left");
+  const peekRight = document.querySelector(".peek--right");
+  const lab = document.querySelector("#lab");
+  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+  const canFly = () => Boolean(peekLeft && peekRight) && !reduceMotion.matches;
 
-  // ----- Drawing, only when something changed -----
+  let W = 0;
+  let H = 0;
+  let arrive = reduceMotion.matches ? 1 : 0; // 0 → 1 as they first pop up out of the grass
+
+  const clamp01 = (v) => Math.max(0, Math.min(1, v));
+  const mix = (a, b, t) => a + (b - a) * t;
+  const smooth = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
+  const springy = (t) => 1 + 2.7 * Math.pow(t - 1, 3) + 1.7 * Math.pow(t - 1, 2); // overshoots, then settles
+
+  // A pose is: middle of the mascot on screen (px), pixels per model unit, and how it is
+  // turned (roll on screen, tip toward the viewer).
+  const place = (m, pose, spin, lift, shade) => {
+    m.rig.position.set(pose.x - W / 2, H / 2 - pose.y + lift, m === sunny ? 300 : 0);
+    m.rig.scale.setScalar(Math.max(pose.size * springy(arrive), 0.0001));
+    m.rig.rotation.set(pose.tip, spin.y, pose.roll + spin.z);
+    m.ground.material.opacity = shade;
+  };
+
+  const blend = (a, b, t) => ({
+    x: mix(a.x, b.x, t),
+    y: mix(a.y, b.y, t),
+    size: mix(a.size, b.size, t),
+    roll: mix(a.roll, b.roll, t),
+    tip: mix(a.tip, b.tip, t),
+  });
+
+  function update() {
+    const spot = heroSpot.getBoundingClientRect();
+    const hill = hillEl ? hillEl.getBoundingClientRect().height : 100;
+
+    // On the grass: Nilly standing on the right, Sunny lying in front of her on the left.
+    const nillyTall = Math.min(380, Math.max(150, spot.width * 0.74));
+    const sunnyWide = Math.min(360, Math.max(150, spot.width * 0.68));
+    const onGrass = {
+      nilly: { x: spot.left + spot.width * 0.7, y: spot.bottom - hill * 0.3 - nillyTall / 2, size: nillyTall / nilly.tall, roll: 0, tip: 0.24 },
+      sunny: { x: spot.left + spot.width * 0.24, y: spot.bottom - hill * 0.12 - (sunnyWide / sunny.wide) * 0.2, size: sunnyWide / sunny.wide, roll: 0, tip: 0.26 },
+    };
+
+    let t = 0;
+    let peeking = onGrass;
+    if (canFly()) {
+      // Peeking in at the edges of About, where the hand-drawn mascots would otherwise be.
+      // Their boxes are read from the page layout (not from where animations have moved
+      // them), and nudged outward so each mascot is partly off the edge.
+      const box = peekLeft.parentElement.getBoundingClientRect();
+      const spotOf = (el) => ({
+        x: box.left + el.offsetLeft + el.offsetWidth / 2,
+        y: box.top + el.offsetTop + el.offsetHeight / 2,
+        w: el.offsetWidth,
+        h: el.offsetHeight,
+      });
+      const left = spotOf(peekLeft);
+      const right = spotOf(peekRight);
+      const low = window.matchMedia("(max-width: 900px)").matches; // they sit in the bottom corners
+      peeking = {
+        sunny: { x: left.x - left.w * (low ? 0.2 : 0.3), y: left.y - left.h * (low ? -0.1 : 0.3), size: (left.w * 1.05) / sunny.wide, roll: -0.5, tip: 1.05 },
+        nilly: { x: right.x + right.w * (low ? 0.22 : 0.3), y: right.y - right.h * (low ? -0.2 : 0.5), size: (right.h * 0.86) / nilly.tall, roll: 0.42, tip: 0.14 },
+      };
+
+      // The flight runs from just after you start scrolling until About is well into view.
+      // (While About is held in place by motion.js, its wrapper still marks its real spot.)
+      const about = peekLeft.closest(".pin-spacer") || peekLeft.parentElement;
+      const aboutTop = about.getBoundingClientRect().top + window.scrollY;
+      const end = Math.max(200, aboutTop - window.innerHeight * 0.45);
+      t = smooth(clamp01((window.scrollY - 30) / (end - 30)));
+    }
+
+    const arc = Math.sin(t * Math.PI) * Math.min(170, H * 0.2); // they rise, then come down
+    place(nilly, blend(onGrass.nilly, peeking.nilly, t), { y: 0, z: -t * Math.PI * 2 }, arc, 1 - clamp01(t * 4));
+    place(sunny, blend(onGrass.sunny, peeking.sunny, t), { y: t * Math.PI * 2, z: 0 }, arc * 0.8, mix(1, 0.55, t));
+
+    // Once the Lab has slid over About there is nothing left to see.
+    const covered = lab && lab.getBoundingClientRect().top <= 0;
+    canvas.style.visibility = covered ? "hidden" : "visible";
+    if (!covered) renderer.render(scene, camera);
+  }
+
+  // ----- Redrawing, only when needed -----
   let frame = 0;
-  const render = () => renderer.render(scene, camera);
-
-  const settle = () => {
+  let started = 0;
+  const tick = (now) => {
+    frame = 0;
     let moving = false;
+
+    if (arrive < 1) {
+      if (!started) started = now;
+      arrive = clamp01((now - started) / 900);
+      moving = arrive < 1;
+    }
     for (const m of mascots) {
       m.yaw += (m.targetYaw - m.yaw) * 0.16;
       m.pitch += (m.targetPitch - m.pitch) * 0.16;
@@ -215,36 +327,48 @@ function init(holder) {
       m.lean(m.yaw, m.pitch);
       if (Math.abs(m.targetYaw - m.yaw) + Math.abs(m.targetPitch - m.pitch) > 0.001) moving = true;
     }
-    render();
-    frame = moving ? requestAnimationFrame(settle) : 0;
+    update();
+    if (moving) request();
+  };
+  const request = () => {
+    if (!frame) frame = requestAnimationFrame(tick);
   };
 
-  // They look toward wherever the pointer is on the page, not just over the mascots.
+  // They look toward wherever the pointer is on the page.
   const where = new THREE.Vector3();
   window.addEventListener("pointermove", (event) => {
-    const box = renderer.domElement.getBoundingClientRect();
-    if (!box.width) return;
-    const px = ((event.clientX - box.left) / box.width) * 2 - 1;
-    const py = -(((event.clientY - box.top) / box.height) * 2 - 1);
+    const px = (event.clientX / W) * 2 - 1;
+    const py = -((event.clientY / H) * 2 - 1);
     for (const m of mascots) {
       m.eyes.getWorldPosition(where).project(camera);
-      m.targetYaw = THREE.MathUtils.clamp((px - where.x) * 0.3, -0.34, 0.34);
-      m.targetPitch = THREE.MathUtils.clamp(-(py - where.y) * 0.24, -0.26, 0.2);
+      m.targetYaw = THREE.MathUtils.clamp((px - where.x) * 0.5, -0.34, 0.34);
+      m.targetPitch = THREE.MathUtils.clamp(-(py - where.y) * 0.4, -0.26, 0.2);
     }
-    if (!frame) frame = requestAnimationFrame(settle);
+    request();
   });
 
   const resize = () => {
-    const { clientWidth: w, clientHeight: h } = renderer.domElement;
-    if (!w || !h) return;
-    renderer.setSize(w, h, false);
-    camera.aspect = w / h;
+    W = window.innerWidth;
+    H = window.innerHeight;
+    renderer.setSize(W, H, false);
+    camera.left = -W / 2;
+    camera.right = W / 2;
+    camera.top = H / 2;
+    camera.bottom = -H / 2;
     camera.updateProjectionMatrix();
-    render();
+    request();
   };
 
-  holder.append(renderer.domElement);
-  holder.classList.add("has-3d");
-  new ResizeObserver(resize).observe(holder);
+  document.body.append(canvas);
+  heroSpot.classList.add("has-3d");
+  document.documentElement.classList.toggle("has-flying-mascots", canFly());
+
+  window.addEventListener("scroll", request, { passive: true });
+  window.addEventListener("resize", resize);
+  new ResizeObserver(request).observe(document.body); // the page reflowing moves their spots
+  reduceMotion.addEventListener("change", () => {
+    document.documentElement.classList.toggle("has-flying-mascots", canFly());
+    request();
+  });
   resize();
 }
