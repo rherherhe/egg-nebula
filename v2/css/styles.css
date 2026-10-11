@@ -784,7 +784,8 @@ a.card:hover .card-link {
 }
 
 .card-art img,
-.card-art svg {
+.card-art svg,
+.card-art video {
   width: 100%;
   height: 100%;
   object-fit: cover;

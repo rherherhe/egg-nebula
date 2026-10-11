@@ -86,6 +86,23 @@ if (form) {
   });
 }
 
+// Preview clips (the Planet Sizes card) play only while they are on screen, and not at all
+// for visitors who ask for reduced motion; they see the still poster instead.
+const clips = document.querySelectorAll("video[autoplay]");
+if (clips.length) {
+  const calm = window.matchMedia("(prefers-reduced-motion: reduce)");
+  const watcher = new IntersectionObserver((entries) => {
+    for (const { target, isIntersecting } of entries) {
+      if (isIntersecting && !calm.matches) target.play().catch(() => {});
+      else target.pause();
+    }
+  });
+  for (const clip of clips) {
+    if (calm.matches) clip.removeAttribute("autoplay");
+    watcher.observe(clip);
+  }
+}
+
 // The telescope by the footer can be pointed up and down: drag it, or focus it and use the
 // arrow keys. It is exposed to assistive technology as a slider.
 const telescope = document.querySelector(".telescope");
