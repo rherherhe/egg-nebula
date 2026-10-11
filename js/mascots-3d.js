@@ -236,24 +236,28 @@ function init(heroSpot) {
 
   const clamp01 = (v) => Math.max(0, Math.min(1, v));
   const mix = (a, b, t) => a + (b - a) * t;
-  const smooth = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
+  const glide = (t) => 0.5 - 0.5 * Math.cos(Math.PI * t); // eases in and out, softly
   const springy = (t) => 1 + 2.7 * Math.pow(t - 1, 3) + 1.7 * Math.pow(t - 1, 2); // overshoots, then settles
 
   // A pose is: middle of the mascot on screen (px), pixels per model unit, and how it is
   // turned (roll on screen, tip toward the viewer).
-  const place = (m, pose, spin, lift, shade) => {
-    m.rig.position.set(pose.x - W / 2, H / 2 - pose.y + lift, m === sunny ? 300 : 0);
+  const place = (m, pose, yaw, shade) => {
+    m.rig.position.set(pose.x - W / 2, H / 2 - pose.y, m === sunny ? 300 : 0);
     m.rig.scale.setScalar(Math.max(pose.size * springy(arrive), 0.0001));
-    m.rig.rotation.set(pose.tip, spin.y, pose.roll + spin.z);
+    m.rig.rotation.set(pose.tip, yaw, pose.roll);
     m.ground.material.opacity = shade;
   };
 
-  const blend = (a, b, t) => ({
-    x: mix(a.x, b.x, t),
-    y: mix(a.y, b.y, t),
-    size: mix(a.size, b.size, t),
-    roll: mix(a.roll, b.roll, t),
-    tip: mix(a.tip, b.tip, t),
+  // The way from the grass to the peeking spot: across at an even pace, with a lift added
+  // on top. The lift peaks early (about a third of the way), so they rise first and then
+  // come down gently onto the spot, which keeps them clear of the text arriving below.
+  const swoop = (a, b, p, lift) => ({
+    x: mix(a.x, b.x, p),
+    y: mix(a.y, b.y, p) - lift * Math.sin(Math.PI * Math.pow(p, 0.7)),
+    size: mix(a.size, b.size, p),
+    // They lean into the turn and level out, rather than tumbling.
+    roll: mix(a.roll, b.roll, p),
+    tip: mix(a.tip, b.tip, p),
   });
 
   function update() {
@@ -268,7 +272,7 @@ function init(heroSpot) {
       sunny: { x: spot.left + spot.width * 0.24, y: spot.bottom - hill * 0.12 - (sunnyWide / sunny.wide) * 0.2, size: sunnyWide / sunny.wide, roll: 0, tip: 0.26 },
     };
 
-    let t = 0;
+    let raw = 0; // how far along the journey the page has scrolled, 0 to 1
     let peeking = onGrass;
     if (canFly()) {
       // Peeking in at the edges of About, where the hand-drawn mascots would otherwise be.
@@ -285,23 +289,36 @@ function init(heroSpot) {
       const right = spotOf(peekRight);
       const low = window.matchMedia("(max-width: 900px)").matches; // they sit in the bottom corners
       peeking = {
-        sunny: { x: left.x - left.w * (low ? 0.2 : 0.3), y: left.y - left.h * (low ? -0.1 : 0.3), size: (left.w * 1.05) / sunny.wide, roll: -0.5, tip: 1.05 },
+        sunny: { x: left.x - left.w * (low ? 0.2 : 0.4), y: left.y - left.h * (low ? -0.1 : 0.3), size: (left.w * 1.05) / sunny.wide, roll: -0.5, tip: 1.05 },
         nilly: { x: right.x + right.w * (low ? 0.22 : 0.3), y: right.y - right.h * (low ? -0.2 : 0.5), size: (right.h * 0.86) / nilly.tall, roll: 0.42, tip: 0.14 },
       };
 
       // (While About is held in place by motion.js, its wrapper still marks its real spot.)
       const about = peekLeft.closest(".pin-spacer") || peekLeft.parentElement;
       const aboutTop = about.getBoundingClientRect().top + window.scrollY;
-      // When About is held in place for its story, the flight carries on into that hold,
-      // so they land while the opening paragraph is still on screen. Otherwise they land as About comes into view.
+      // When About is held in place for its story, the journey carries on into that hold and
+      // ends while the "Wherever your curiosity begins" line is arriving. Otherwise they land
+      // as About comes into view.
       const hold = parseFloat(document.documentElement.style.getPropertyValue("--about-hold")) || 0;
-      const end = Math.max(200, hold ? aboutTop + hold * 0.22 : aboutTop - window.innerHeight * 0.45);
-      t = smooth(clamp01((window.scrollY - 30) / (end - 30)));
+      const end = Math.max(200, hold ? aboutTop + hold * 0.72 : aboutTop - window.innerHeight * 0.45);
+      raw = clamp01((window.scrollY - 30) / (end - 30));
     }
 
-    const arc = Math.sin(t * Math.PI) * Math.min(170, H * 0.2); // they rise, then come down
-    place(nilly, blend(onGrass.nilly, peeking.nilly, t), { y: 0, z: -t * Math.PI * 2 }, arc, 1 - clamp01(t * 4));
-    place(sunny, blend(onGrass.sunny, peeking.sunny, t), { y: t * Math.PI * 2, z: 0 }, arc * 0.8, mix(1, 0.55, t));
+    // Nilly sets off first and Sunny follows a beat behind, so they feel like two creatures
+    // rather than one object. Sunny's lift is higher, so that where it crosses the page it
+    // passes above the text rather than over it.
+    // Once they set off, they leave from the spot they were in, rather than being dragged
+    // up and out of the window by the hero scrolling away underneath them.
+    const risen = canFly() ? Math.max(0, window.scrollY - 30) : 0;
+    const takeoff = {
+      nilly: { ...onGrass.nilly, y: onGrass.nilly.y + risen },
+      sunny: { ...onGrass.sunny, y: onGrass.sunny.y + risen },
+    };
+
+    const pn = glide(raw);
+    const ps = glide(clamp01((raw - 0.1) / 0.9));
+    place(nilly, swoop(takeoff.nilly, peeking.nilly, pn, H * 0.2), -Math.sin(pn * Math.PI) * 0.25, 1 - clamp01(pn * 4));
+    place(sunny, swoop(takeoff.sunny, peeking.sunny, ps, H * 0.5), Math.sin(ps * Math.PI) * 0.3, mix(1, 0.55, ps));
 
     // Once the Lab has slid over About there is nothing left to see.
     const covered = lab && lab.getBoundingClientRect().top <= 0;

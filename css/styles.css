@@ -161,7 +161,7 @@ a:hover {
   font-size: clamp(1.05rem, 1.8vw, 1.2rem);
   font-weight: 300;
   color: var(--muted);
-  max-width: 34em;
+  max-width: 30em;
 }
 
 .btn {
@@ -543,7 +543,7 @@ a:hover {
 }
 
 .section-head {
-  max-width: 40em;
+  max-width: 36em;
   margin-bottom: clamp(24px, 4vw, 44px);
 }
 
@@ -572,7 +572,7 @@ a:hover {
 }
 
 .about-copy {
-  max-width: 38em;
+  max-width: 30em;
   margin-inline: auto;
   font-size: 1.1rem;
   font-weight: 300;
@@ -590,6 +590,12 @@ a:hover {
 }
 
 /* Without the staged scroll, the second part simply follows the first. */
+/* The About heading is held to a short line length too. */
+.about h2 {
+  max-width: 15em;
+  margin-inline: auto;
+}
+
 .about-stage--two {
   margin-top: 1.8em;
 }
@@ -672,7 +678,7 @@ a:hover {
 }
 
 .perspective .wrap {
-  max-width: 44em;
+  max-width: 38em;
 }
 
 .perspective p {
@@ -1113,7 +1119,7 @@ a.card:hover .card-link {
 }
 
 .piece-text {
-  max-width: 38em;
+  max-width: 34em;
 }
 
 .piece-text h3 {

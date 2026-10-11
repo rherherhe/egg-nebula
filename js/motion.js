@@ -151,23 +151,23 @@
         const shown = "inset(0% 0% 0% 0%)";
         story
           // Part one leaves: each piece is wiped away from the bottom up while it drifts off.
-          .fromTo(".about-stage--one .eyebrow", { clipPath: shown, y: 0 }, { clipPath: wiped, y: -60, duration: 0.8, ease: "power3.in" }, 1.0)
-          .fromTo(".about-stage--one h2", { clipPath: shown, y: 0, skewY: 0 }, { clipPath: wiped, y: -90, skewY: -4, duration: 0.9, ease: "power3.in" }, 1.12)
-          .fromTo(".about-stage--one .about-copy", { clipPath: shown, y: 0 }, { clipPath: wiped, y: -90, duration: 0.9, ease: "power3.in" }, 1.28)
+          .fromTo(".about-stage--one .eyebrow", { clipPath: shown, y: 0 }, { clipPath: wiped, y: -60, duration: 0.7, ease: "power3.in" }, 0.8)
+          .fromTo(".about-stage--one h2", { clipPath: shown, y: 0, skewY: 0 }, { clipPath: wiped, y: -90, skewY: -4, duration: 0.8, ease: "power3.in" }, 0.9)
+          .fromTo(".about-stage--one .about-copy", { clipPath: shown, y: 0 }, { clipPath: wiped, y: -90, duration: 0.8, ease: "power3.in" }, 1.05)
           // Part two arrives in its place: the line rises word by word, then the paragraph unrolls.
           .fromTo(
             splitAndKeep($(".about-line")),
             { yPercent: 125, rotation: 6 },
             { yPercent: 0, rotation: 0, duration: 1, ease: "power3.out", stagger: 0.09 },
-            2.3
+            1.75
           )
           .fromTo(
             ".about-stage--two > p:last-child",
             { clipPath: wiped, y: 40 },
             { clipPath: shown, y: 0, duration: 1.1, ease: "power2.out" },
-            3.2
+            2.75
           )
-          .to({}, { duration: 0.7 }); // a beat to read before the Lab arrives
+          .to({}, { duration: 1.0 }); // a beat to read before the Lab arrives
       }
 
       gsap.to(".about > .wrap", {
