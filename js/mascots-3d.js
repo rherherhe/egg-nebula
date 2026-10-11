@@ -293,9 +293,9 @@ function init(heroSpot) {
       const about = peekLeft.closest(".pin-spacer") || peekLeft.parentElement;
       const aboutTop = about.getBoundingClientRect().top + window.scrollY;
       // When About is held in place for its story, the flight carries on into that hold,
-      // so they land as the middle line appears. Otherwise they land as About comes into view.
+      // so they land while the opening paragraph is still on screen. Otherwise they land as About comes into view.
       const hold = parseFloat(document.documentElement.style.getPropertyValue("--about-hold")) || 0;
-      const end = Math.max(200, hold ? aboutTop + hold * 0.5 : aboutTop - window.innerHeight * 0.45);
+      const end = Math.max(200, hold ? aboutTop + hold * 0.22 : aboutTop - window.innerHeight * 0.45);
       t = smooth(clamp01((window.scrollY - 30) / (end - 30)));
     }
 

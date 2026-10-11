@@ -37,7 +37,14 @@
 
   const media = gsap.matchMedia();
 
-  media.add("(prefers-reduced-motion: no-preference)", () => {
+  media.add(
+    {
+      motion: "(prefers-reduced-motion: no-preference)",
+      // Wide and tall enough for About to be held in place and told in two parts.
+      roomy: "(min-width: 901px) and (min-height: 700px)",
+    },
+    (context) => {
+    if (!context.conditions.motion) return;
     const undo = [];
     const listen = (el, type, handler, options) => {
       el.addEventListener(type, handler, options);
@@ -96,18 +103,23 @@
       });
     }
 
-    // ----- About holds still and tells its story in steps; then the Lab slides over it -----
-    // About fills the window and is pinned there. While it is held, scrolling brings in
-    // the middle line and then the last paragraph. After that the Lab, with its rounded
-    // top, scrolls up over it while About sinks back and dims.
-    // (If About is taller than the window, it skips the steps and is just covered.)
+    // ----- About holds still and tells its story in two parts; then the Lab slides over it -----
+    // On a roomy screen About fills the window and is pinned there. Its first part (the
+    // heading and opening paragraph) stays for a while, then leaves with a rolling wipe.
+    // The second part ("Wherever your curiosity begins…") takes the same spot. After that
+    // the Lab, with its rounded top, scrolls up over About while it sinks back and dims.
+    // Elsewhere (narrow or short windows) the two parts just stack, and About is covered.
     const about = $(".about");
     let aboutIsStaged = false;
     if (about && $("#lab")) {
-      const staged = () => about.offsetHeight <= window.innerHeight + 2;
-      const hold = () => (staged() ? Math.round(window.innerHeight * 1.3) : 0);
+      const staged = context.conditions.roomy;
+      aboutIsStaged = staged;
+      const fits = () => staged || about.offsetHeight <= window.innerHeight + 2;
+      const hold = () => (staged ? Math.round(window.innerHeight * 1.8) : 0);
       const coverLength = () => Math.min(about.offsetHeight, window.innerHeight);
-      aboutIsStaged = staged();
+
+      about.classList.toggle("is-staged", staged);
+      undo.push(() => about.classList.remove("is-staged"));
 
       // The Lab is pushed down by the length of the hold, so it arrives when the story is done.
       // mascots-3d.js reads the same number to pace the mascots' flight.
@@ -121,33 +133,41 @@
 
       const pin = ScrollTrigger.create({
         trigger: about,
-        start: () => (staged() ? "top top" : "bottom bottom"),
+        start: () => (fits() ? "top top" : "bottom bottom"),
         end: () => `+=${hold() + coverLength()}`,
         pin: true,
         pinSpacing: false,
         invalidateOnRefresh: true,
       });
 
-      if (aboutIsStaged) {
+      if (staged) {
         const story = gsap.timeline({
           scrollTrigger: { trigger: about, start: "top top", end: () => `+=${Math.max(hold(), 1)}`, scrub: 0.6, invalidateOnRefresh: true },
         });
-        // Explicit start and end values: with invalidateOnRefresh, a plain from() would re-read
-        // its end state while the element is still hidden, and animate hidden-to-hidden.
+        // Explicit start and end values throughout: with invalidateOnRefresh, a plain from()
+        // would re-read its end state while the element is still hidden, and animate
+        // hidden-to-hidden.
+        const wiped = "inset(0% 0% 100% 0%)";
+        const shown = "inset(0% 0% 0% 0%)";
         story
+          // Part one leaves: each piece is wiped away from the bottom up while it drifts off.
+          .fromTo(".about-stage--one .eyebrow", { clipPath: shown, y: 0 }, { clipPath: wiped, y: -60, duration: 0.8, ease: "power3.in" }, 1.0)
+          .fromTo(".about-stage--one h2", { clipPath: shown, y: 0, skewY: 0 }, { clipPath: wiped, y: -90, skewY: -4, duration: 0.9, ease: "power3.in" }, 1.12)
+          .fromTo(".about-stage--one .about-copy", { clipPath: shown, y: 0 }, { clipPath: wiped, y: -90, duration: 0.9, ease: "power3.in" }, 1.28)
+          // Part two arrives in its place: the line rises word by word, then the paragraph unrolls.
           .fromTo(
             splitAndKeep($(".about-line")),
             { yPercent: 125, rotation: 6 },
             { yPercent: 0, rotation: 0, duration: 1, ease: "power3.out", stagger: 0.09 },
-            0.8
+            2.3
           )
           .fromTo(
-            ".about-copy > p:last-child",
-            { clipPath: "inset(0% 0% 100% 0%)", y: 40 },
-            { clipPath: "inset(0% 0% 0% 0%)", y: 0, duration: 1.1, ease: "power2.out" },
-            2.6
+            ".about-stage--two > p:last-child",
+            { clipPath: wiped, y: 40 },
+            { clipPath: shown, y: 0, duration: 1.1, ease: "power2.out" },
+            3.2
           )
-          .to({}, { duration: 0.5 }); // a beat to read before the Lab arrives
+          .to({}, { duration: 0.7 }); // a beat to read before the Lab arrives
       }
 
       gsap.to(".about > .wrap", {
@@ -194,8 +214,8 @@
     // ----- Paragraphs unroll from the top, like a blind being let down -----
     const unrolling = $(
       [
-        // (When About tells its story in steps, only its first paragraph unrolls on arrival.)
-        aboutIsStaged ? ".about-copy > p:first-child" : ".about-copy > *",
+        // (When About tells its story in two parts, only the first unrolls on arrival.)
+        aboutIsStaged ? ".about-stage--one .about-copy > p" : ".about-stage .about-copy > p, .about-stage--two > p",
         ".section-head .lead",
         ".perspective .wrap > p:not(.perspective-lead):not(.perspective-line):not(.section-foot)",
         ".page-head .wrap > *:not(h1):not(.eyebrow)",
@@ -444,5 +464,6 @@
     listen(window, "load", refresh);
 
     return () => undo.forEach((fn) => fn());
-  });
+    }
+  );
 })();
