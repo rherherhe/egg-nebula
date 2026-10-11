@@ -792,6 +792,73 @@ a.card:hover .card-link {
   object-position: top;
 }
 
+/* Sky Stories isn't ready yet. Hovering its picture brings the mascots in from the sides
+   with a "Coming soon" between them, while the constellation dims behind. */
+.card-art {
+  position: relative;
+}
+
+.card--soon .card-art svg {
+  transition: opacity 0.35s ease;
+}
+
+.soon-reveal {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+}
+
+.soon-text {
+  font-size: clamp(1.2rem, 2.6vw, 1.7rem);
+  font-weight: 700;
+  color: var(--white);
+  opacity: 0;
+  scale: 0.8;
+  transition: opacity 0.3s ease, scale 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.card-art .soon-peek {
+  position: absolute;
+  height: auto;
+  object-fit: contain;
+  transition: transform 0.55s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.card-art .soon-peek--left {
+  left: 0;
+  bottom: 6%;
+  width: 36%;
+  transform: translateX(-150%) rotate(20deg);
+}
+
+.card-art .soon-peek--right {
+  right: 0;
+  bottom: -16%;
+  width: 27%;
+  transform: translateX(150%) rotate(-16deg);
+}
+
+.card--soon:hover .card-art svg {
+  opacity: 0.3;
+}
+
+.card--soon:hover .soon-text {
+  opacity: 1;
+  scale: 1;
+  transition-delay: 0.12s;
+}
+
+.card--soon:hover .soon-peek--left {
+  transform: translateX(-30%) rotate(20deg);
+}
+
+.card--soon:hover .soon-peek--right {
+  transform: translateX(24%) rotate(-16deg);
+  transition-delay: 0.06s;
+}
+
 .card-body {
   padding: 18px 22px 24px;
 }

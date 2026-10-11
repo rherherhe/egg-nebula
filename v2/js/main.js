@@ -86,21 +86,23 @@ if (form) {
   });
 }
 
-// Preview clips (the Planet Sizes card) play only while they are on screen, and not at all
-// for visitors who ask for reduced motion; they see the still poster instead.
-const clips = document.querySelectorAll("video[autoplay]");
-if (clips.length) {
+// Preview clips (the Planet Sizes card) play only while their card is hovered or focused.
+// The rest of the time the still poster shows. Visitors who ask for reduced motion always
+// get the poster.
+for (const clip of document.querySelectorAll(".card video")) {
+  const card = clip.closest(".card");
   const calm = window.matchMedia("(prefers-reduced-motion: reduce)");
-  const watcher = new IntersectionObserver((entries) => {
-    for (const { target, isIntersecting } of entries) {
-      if (isIntersecting && !calm.matches) target.play().catch(() => {});
-      else target.pause();
-    }
-  });
-  for (const clip of clips) {
-    if (calm.matches) clip.removeAttribute("autoplay");
-    watcher.observe(clip);
-  }
+  const start = () => {
+    if (!calm.matches) clip.play().catch(() => {});
+  };
+  const stop = () => {
+    clip.pause();
+    clip.load(); // back to the poster, ready to start from the beginning next time
+  };
+  card.addEventListener("pointerenter", start);
+  card.addEventListener("pointerleave", stop);
+  card.addEventListener("focusin", start);
+  card.addEventListener("focusout", stop);
 }
 
 // The telescope by the footer can be pointed up and down: drag it, or focus it and use the
