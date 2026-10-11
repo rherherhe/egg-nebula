@@ -435,7 +435,7 @@
       listen(window, "pointermove", (event) => {
         ringX(event.clientX);
         ringY(event.clientY);
-        const pressable = event.target.closest && event.target.closest("a, button, canvas, input, .zoom");
+        const pressable = event.target.closest && event.target.closest("a, button, canvas, input, .zoom, .telescope");
         gsap.to(ring, { autoAlpha: 1, scale: pressable ? 2.1 : 1, duration: 0.35, overwrite: "auto" });
       });
       listen(document, "pointerleave", () => gsap.to(ring, { autoAlpha: 0, duration: 0.3 }));
