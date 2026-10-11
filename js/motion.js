@@ -217,7 +217,7 @@
         // (When About tells its story in two parts, only the first unrolls on arrival.)
         aboutIsStaged ? ".about-stage--one .about-copy > p" : ".about-stage .about-copy > p, .about-stage--two > p",
         ".section-head .lead",
-        ".perspective .wrap > p:not(.perspective-lead):not(.perspective-line):not(.section-foot)",
+        ".perspective-inner > p:not(.perspective-lead):not(.perspective-line):not(.section-foot)",
         ".page-head .wrap > *:not(h1):not(.eyebrow)",
         ".resource-section > .wrap > .lead",
         ".piece-text > *:not(h3)",
@@ -311,6 +311,22 @@
         },
       });
       undo.push(() => clearTimeout(settling));
+    }
+
+    // ----- Our Perspective: the card rises and settles as it comes into view -----
+    const perspectiveCard = $(".perspective-card");
+    if (perspectiveCard) {
+      gsap.fromTo(
+        perspectiveCard,
+        { y: 120, scale: 0.9, autoAlpha: 0, transformOrigin: "50% 100%" },
+        {
+          y: 0,
+          scale: 1,
+          autoAlpha: 1,
+          ease: "none",
+          scrollTrigger: { trigger: perspectiveCard, start: "top 98%", end: "top 55%", scrub: 0.5 },
+        }
+      );
     }
 
     // ----- Our Perspective: the opening line lights up word by word; the closing line types in -----

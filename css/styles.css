@@ -581,8 +581,9 @@ a:hover {
 .about-copy .about-line {
   font-size: clamp(1.15rem, 2.2vw, 1.4rem);
   font-weight: 600;
-  line-height: 1.45;
+  line-height: 1.3;
   margin-block: 1.4em;
+  text-wrap: balance;
 }
 
 .about-copy p:last-child {
@@ -616,9 +617,15 @@ a:hover {
   margin-top: 0;
 }
 
+/* Tighter lines, and a gap to the paragraph that is in proportion to the heading's size. */
 .about.is-staged .about-line {
   font-size: clamp(1.5rem, 3.2vw, 2.3rem);
-  margin-bottom: 1.2em;
+  line-height: 1.2;
+  margin-bottom: 0.75em;
+}
+
+.about.is-staged .about-stage--two > p:last-child {
+  line-height: 1.65;
 }
 
 /* The hand-drawn mascots lean in from the edges of the About section. */
@@ -674,11 +681,31 @@ a:hover {
 
 .perspective {
   text-align: center;
-  border-top: 2px solid var(--line);
+  padding-block: clamp(72px, 11vw, 150px);
 }
 
-.perspective .wrap {
+/* A card of its own, with the starfield (js/galaxy.js) behind the words. */
+.perspective-card {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  border-radius: clamp(24px, 4vw, 44px);
+  background: #0e0420;
+  border: 2px solid var(--line);
+  padding: clamp(56px, 10vw, 120px) clamp(20px, 5vw, 64px);
+}
+
+.galaxy {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  width: 100%;
+  height: 100%;
+}
+
+.perspective-inner {
   max-width: 38em;
+  margin-inline: auto;
 }
 
 .perspective p {
